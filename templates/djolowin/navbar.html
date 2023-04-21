@@ -1,0 +1,74 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<a class="navbar-brand" href="/"
+		><img
+			class="d-inline-block align-text-center"
+			src="{% static 'images/djolo-win-website-favicon-color.png' %}"
+			alt="Elephant Logo"
+			width="40"
+			height="40" />DjoloWin</a
+	>
+	<button
+		class="navbar-toggler"
+		type="button"
+		data-bs-toggle="collapse"
+		data-bs-target="#navbarSupportedContent"
+		aria-controls="navbarSupportedContent"
+		aria-expanded="false"
+		aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			<li class="nav-item dropdown">
+				{% if request.user.is_authenticated %}
+					<a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<i class="fa fa-user"></i>{{request.user.username}}</a>
+				{% endif %}
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="{% url 'account:user-detail' username=request.user.username %}">My Profile Information</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="#">My Squad</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" href="{% url 'playercard:owned-playercard' %}">My Cards</a>
+					<a class="dropdown-item" href="#">My Auctions</a>
+					<a class="dropdown-item" href="{% url 'wallet:wallet-dashboard' %}">My Wallet</a>
+				</div>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					Marketplace
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href={% url 'auction:active_auctions' %}>Auctions</a>
+					<a class="dropdown-item" href="{% url 'bundle:bundles_list' %}">Bundles</a>
+					<a class="dropdown-item" href="#">Special Offers</a>
+				</div>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					Settings
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="#">Privacy Settings</a>
+					<a class="dropdown-item" href="#">Notifications Settings</a>
+					<a class="dropdown-item" href="#">Security</a>
+					<a class="dropdown-item" href="#">Payment Methods</a>
+					<a class="dropdown-item" href="#">Language and Location</a>
+				</div>
+			</li>
+			<li>
+				<a href="#" class="nav-link"><i class="fa fa-fw fa-bell"></i>Notification Center</a>
+			</li>
+			<li>
+				<a href={% url 'account:logout' %} class="nav-link"><i class="fa fa-fw fa-power-off"></i>Log Out</a>
+			</li>
+		</ul>
+		<form class="d-flex" role="search">
+			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+			<button class="btn btn-outline-success" type="submit">Search</button>
+		</form>
+	</div>
+</nav>

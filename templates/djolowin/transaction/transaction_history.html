@@ -1,0 +1,53 @@
+{% extends 'djolowin/main.html' %} {% block content %}
+<style>
+	table {
+		border-collapse: collapse;
+	}
+
+	th {
+		padding: 10px;
+		border-left: 4px solid white;
+	}
+	td {
+		padding: 10px;
+		border-left: 4px solid white;
+	}
+	td:first-child {
+		border-left: none;
+	}
+</style>
+<h1>Overall Transaction History</h1>
+<table>
+	<thead>
+		<tr>
+			<th>Transaction Type</th>
+			<th>Currency Spent</th>
+			<th>Description</th>
+			<th>Date</th>
+			<th>Time</th>
+		</tr>
+	</thead>
+	<hr />
+	<tbody>
+		{% for transaction in transactions %}
+		<tr>
+			<td>{{ transaction.transaction_type}}</td>
+			<td>{{ transaction.amount_spent }} DJOBA</td>
+			{% if transaction.transaction_type == 'card_purchase' %}
+			<td>{{ transaction.card }}</td>
+			{% elif transaction.transaction_type == 'bundle_purchase' %}
+			<td><a href="{{ transaction.bundle.get_absolute_url }}" >{{ transaction.bundle.name }}</td></a>
+			{% else %}
+			<td>{{ transaction.currency_package.name }}</td>
+			{% endif %}
+			<td>{{ transaction.timestamp.date }}</td>
+			<td>{{ transaction.timestamp.time }}</td>
+		</tr>
+		{% empty %}
+		<tr>
+			<td colspan="4">No transactions to display.</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

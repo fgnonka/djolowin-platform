@@ -1,0 +1,10 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<h2>{{ team }}</h2>
+<a><h2>{{ player.name }}</h2></a>
+<li>Born on: {{ player.date_of_birth }}</li>
+<li>Position: {{ player.position }}</li>
+<li># {{ player.jersey_number }}</li>
+<li>Plays for: <a href="{{' player.team.get_absolute_url' }}">{{ player.team }}</a></li>
+<li>{{ player.country }}</li>
+<hr />
+{% endblock %}

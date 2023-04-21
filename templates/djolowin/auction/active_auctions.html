@@ -1,0 +1,23 @@
+{% extends "djolowin/main.html" %} {% block content %}
+
+<h1>Active Auctions</h1>
+
+<div class="auction-list">
+	{% for auction in auctions %}
+	<div class="auction-item">
+		<h2>{{ auction.card.player.name }} - {{ auction.card.player.team.name }}</h2>
+		<h5>Auction Owner: {{ auction.owner.username }}</h5>
+		<p>Position: {{ auction.card.player.position }}</p>
+		<p>Rarity: {{ auction.card.rarity }}</p>
+		<p>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</p>
+		<p>Time Remaining: {{ auction.time_remaining }}</p>
+		<a href="{% url 'auction:auction_detail' auction.id %}">
+			<h5>Bid on this auction</h5>
+		</a>
+	</div>
+	{% empty %}
+	<p>No active auctions at the moment.</p>
+	{% endfor %}
+</div>
+
+{% endblock %}

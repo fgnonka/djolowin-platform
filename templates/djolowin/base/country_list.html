@@ -1,0 +1,8 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<h2>Countries</h2>
+<ul>
+	{% for country in list_countries %}
+	<li>{{ country.country.name }}</li>
+	{% endfor %}
+</ul>
+{% endblock %}

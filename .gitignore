@@ -1,0 +1,29 @@
+# Compiled files
+*.o
+*.so
+*.dll
+*.exe
+
+# Build directories
+build/
+dist/
+
+#virtualenv
+djolowin-env/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+#environment variables
+.env
+
+# IDE-specific files (e.g. for Visual Studio Code)
+.vscode/
+
+# Package manager files
+node_modules/

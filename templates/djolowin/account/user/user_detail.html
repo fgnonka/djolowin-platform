@@ -1,0 +1,51 @@
+{% extends "djolowin/main.html" %} {% load static %} {% block title %} User:{{user.username}}{% endblock %}
+<!-- Your Stuff: Custom user template -->
+{%block content%}
+<div class="container">
+	<div class="row">
+		<div class="col-sm-12">
+			<h2>{{ user.username }}</h2>
+			{% if user.get_short_name %}
+			<p>{{ user.get_short_name }}</p>
+			{% endif %}
+			<hr />
+		</div>
+	</div>
+	<hr />
+	{% if request.user %}
+	<!-- Action buttons -->
+	<div class="row">
+		<div class="col-sm-12">
+			{% if user.first_name %}
+			<p>
+				<b><em>First Name:</em></b> {{ user.first_name }}
+			</p>
+			{% endif %} {% if user.last_name %}
+			<p>
+				<b><em>Last Name:</em></b> {{ user.last_name }}
+			</p>
+			{% endif %}
+			<p>
+				<b><em>Username:</em></b> {{ user.username }}
+			</p>
+			<p>
+				<b><em>Email Address:</em></b> {{ user.email }}
+			</p>
+			<p>
+				<b><em>Country: </em></b> {{ user.country }}
+			</p>
+			<p>
+				<b><em>Profile Image: </em></b><img src="{{ user.profile_img.url }}" alt="{{ user.username }} avatar" />
+			</p>
+			<p>
+				<b><em>Date joined: </em></b> {{ user.date_joined }}
+			</p>
+			<hr />
+			<a class="btn btn-primary" href="{% url 'account:user-update' %}" role="button">Update My Info</a>
+			<!-- Your Stuff: Custom user template urls -->
+		</div>
+	</div>
+	<!-- End Action buttons -->
+	{% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Email Sent</h1>
+			<p>
+				Thank you for registering! A confirmation email has been sent to {{ email }}. Please click the link in the email
+				to activate your account.
+			</p>
+			<p>
+				If you don't see the email, please check your spam folder or request a
+				<a href="{% url 'account:request_activation_email' %}">new activation email</a>.
+			</p>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+Thank you for signing up for DjoloWin. To activate your account, please click the link below:
+
+{{ protocol }}://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}
+
+If you didn't request this email, please ignore it.
+
+Best regards,
+The DjoloWin Team
+{% endautoescape %}

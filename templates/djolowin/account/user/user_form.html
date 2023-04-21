@@ -1,0 +1,20 @@
+{% extends "djolowin/main.html" %} {% block title %}{{ user.username }}{% endblock %} {%block content%}
+<h6>
+	This section contains your private data. for your security, do not share any of these with anybody on this platform!
+</h6>
+<img
+	src="{{ user.profile_img.url }}"
+	alt="profile image"
+	class="img-fluid rounded-circle"
+	style="max-width: 150px; max-height: 150px" />
+<h2>{{ user.username }}</h2>
+<a class="btn btn-primary" href="{% url 'account:password-change' %}" role="button">Change Password</a>
+<form class="form-horizontal" method="post" enctype="multipart/form-data" action="{% url 'account:user-update' %}">
+	{% csrf_token %} {{ form.as_p }}
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn btn-primary">Update</button>
+		</div>
+	</div>
+</form>
+{% endblock %}

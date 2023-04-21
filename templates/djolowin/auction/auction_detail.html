@@ -1,0 +1,16 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<h1>{{ auction.card }}</h1>
+<p>Starting price: {{ auction.starting_price }}</p>
+<p>End time: {{ auction.end_time }}</p>
+<p>Highest bidder: {{ auction.highest_bidder }}</p>
+<p>Current Bid: {{ auction.current_bid }}</p>
+
+{% if request.user != auction.owner and request.user != auction.highest_bidder %}
+<h2>Bid on this auction</h2>
+<form method="post" action="{% url 'auction:auction_detail' auction.pk %}">
+	{% csrf_token %} {{ bid_form.as_p }}
+	<button type="submit">Place Bid</button>
+{% endif %}
+
+</form>
+{% endblock %}

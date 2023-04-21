@@ -1,0 +1,22 @@
+<form method="get" action="{% url 'base:search' %}">
+    <input type="text" name="q" placeholder="Search cards and collections" value="{{ request.GET.q }}">
+    <select name="team">
+        <option value="">All teams</option>
+        {% for team in teams %}
+            <option value="{{ team }}" {% if request.GET.team == team %}selected{% endif %}>{{ team }}</option>
+        {% endfor %}
+    </select>
+    <select name="position">
+        <option value="">All positions</option>
+        {% for position in positions %}
+            <option value="{{ position }}" {% if request.GET.position == position %}selected{% endif %}>{{ position }}</option>
+        {% endfor %}
+    </select>
+    <select name="rarity">
+        <option value="">All rarities</option>
+        {% for rarity in rarities %}
+            <option value="{{ rarity }}" {% if request.GET.rarity == rarity %}selected{% endif %}>{{ rarity }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>

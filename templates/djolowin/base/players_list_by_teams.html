@@ -1,0 +1,23 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<h2>{{ team }}</h2>
+<table>
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th>Position</th>
+			<th>Date of Birth</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for player in list_players %}
+		<tr>
+			<td>{{ player.jersey_number }}</td>
+			<td><a href="{{" player.get_absolute_url }}>{{ player.name }}</a></td>
+			<td style="border-left: 1px solid #000000">{{ player.position }}</td>
+			<td style="border-left: 1px solid #000000">{{ player.date_of_birth }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

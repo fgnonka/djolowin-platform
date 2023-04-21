@@ -1,0 +1,90 @@
+{% extends "djolowin/main.html" %} {% block content %}
+
+<h1 style="color: #000; font-size: 20px">
+	{{ playercard.player.name }}
+	<br />
+	Owner:{{ playercard.owner.username }}
+	<br />
+	Rarity:{{ playercard.rarity.name }}
+	<br />
+	Index:{{ playercard.index }}
+	<br />
+	Team: {{ playercard.player.team }}
+	<br />
+	Year: {{ playercard.player.team.year }}
+	<br />
+	Price: {{ playercard.price }} DJOBA
+</h1>
+
+<div class="col">
+	<div class="card border-secondary mb-3" style="width: 18rem">
+		<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+		<div class="card-body">
+			<h4 class="card-title">
+				<a class="player-name" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name }}</a>
+			</h4>
+			<h6 class="card-text">
+				Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}
+				<br />
+				Age: {{playercard.player.date_of_birth}}
+				<br />
+				Country: {{ playercard.player.country.country.name }}
+			</h6>
+		</div>
+		{% if playercard.for_sale and request.user != playercard.owner %}
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndPayModal">
+			Purchase for {{ playercard.price }} DJOBA
+		</button>
+		<div
+			class="modal fade"
+			id="reviewAndPayModal"
+			tabindex="-1"
+			aria-labelledby="reviewAndPayModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="reviewAndPayModalLabel">Review and Pay</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<h6>Player Card Information</h6>
+						<p>Name: {{ playercard.player.name }}</p>
+						<p>Price: {{ playercard.price }}</p>
+
+						<h6>Your Actual Balance</h6>
+						<p>{{ request.user.get_wallet.balance }}</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<a href="{% url 'playercard:purchase-playercard' pk=playercard.pk %}" class="btn btn-primary"
+							>Confirm Purchase</a
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% if request.user == playercard.owner %}
+		<button id="modify-price-btn">Modify Price</button>
+		{% if not auction %}
+		<a href="{% url 'auction:create_auction' card_pk=playercard.pk %}">Create an Auction for this card</a>
+		{% endif %}
+		<div id="modify-price-form" style="display: none">
+			<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
+				{% csrf_token %} {{ price_form.as_p }}
+				<button type="submit">Update Price</button>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	const modifyPriceBtn = document.querySelector("#modify-price-btn");
+	const modifyPriceForm = document.querySelector("#modify-price-form");
+
+	modifyPriceBtn.addEventListener("click", () => {
+		modifyPriceForm.style.display = "block";
+	});
+</script>
+{% endif %}
+{% endblock content %}

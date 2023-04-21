@@ -1,0 +1,83 @@
+{% extends "djolowin/main.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'base/css/home.css/' %}" />
+<main>
+	<h1>Welcome {{ user.username }}</h1>
+	<h4>All cards for sale</h4>
+	<div class="container">
+		<h1>Player Card Search</h1>
+		<form method="post" action="{% url 'playercard:playercard-list' %}">
+			{% csrf_token %}
+			<div class="form-row">
+				<div class="col">
+					{{ filter_form.name.label_tag }}
+					{{ filter_form.name }}
+				</div>
+				<div class="col">
+					{{ filter_form.position.label_tag }}
+					{{ filter_form.position }}
+				</div>
+				<div class="col">
+					{{ filter_form.team.label_tag }}
+					{{ filter_form.team }}
+				</div>
+				<div class="col">
+					{{ filter_form.rarity.label_tag }}
+					{{ filter_form.rarity }}
+				</div>
+				<div class="col">
+					<button type="submit" class="btn btn-primary">Filter</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+        {% for playercard in playercards %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card h-100">
+				{% if playercard.rarity.name == 'Rare' %}
+				<img
+					src="{% static 'images/soccer-rare.jpg' %}"
+					alt="Stick figure image"
+					class="img-fluid"
+					style="width: 200px; height: 300px;"
+					/>
+				{% else %}
+				<img
+					src="{% static 'images/soccer_figure.png' %}"
+					alt="Stick figure image"
+					class="img-fluid"
+					style="width: 200px; height: 300px;"
+					/>
+				{% endif %}
+				<a href="{{ playercard.get_absolute_url }}" class="stretched-link">
+                <div class="card-body">
+					</a>
+                    	<h5 class="card-title">{{ playercard.player.name }}</h5>
+                    	<p class="card-text">Rarity: {{ playercard.rarity.name }}</p>
+						<p class="card-text">Position: {{ playercard.player.position }}</p>
+                    	<br>
+						<h6 class="card-text">
+							Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}
+							<br />
+							Age: {{playercard.player.date_of_birth}}
+							<br />
+							Country: {{ playercard.player.team.name }}
+						</h6>
+						{% if playercard.for_sale and request.user != playercard.owner %}
+						<button type="button" class="btn btn-outline-success">
+							Purchase for {{ playercard.price }} DJOBA
+						</button>
+					{% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No cards found in your collection. Try adjusting your filters or search.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% include "djolowin/pagination.html" with page=page_obj %}
+
+{% endblock content %}

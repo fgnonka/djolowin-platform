@@ -1,0 +1,46 @@
+{% extends 'djolowin/main.html' %} {% block content %}
+<h1>Purchase {{ currency_package.name }}</h1>
+<p>Price: ${{ currency_package.price }}</p>
+<p>In-app currency: {{ currency_package.in_app_currency }} DJOBA</p>
+
+<form method="POST" action="{% url 'currency:purchase_currency_package' package_id=currency_package.id %}">
+	{% csrf_token %}
+	<button type="submit" class="btn btn-primary">Buy Now</button>
+</form>
+{% endblock %} {% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+	// Create an instance of the Stripe object with your publishable API key
+	const stripe = Stripe('{{ stripe_public_key }}');
+
+	const form = document.querySelector('form');
+	form.addEventListener('submit', async (event) => {
+	    event.preventDefault();
+
+	    // Create a Stripe Checkout Session
+	    const response = await fetch('{% url 'currency:purchase_currency_package' package_id=currency_package.id %}', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	            'X-CSRFToken': '{{ csrf_token }}',
+	        },
+	    });
+
+	    if (response.ok) {
+	        const session = await response.json();
+	        // Redirect the user to the Stripe Checkout page
+	        const result = await stripe.redirectToCheckout({
+	            sessionId: session.id,
+	        });
+
+	        if (result.error) {
+	            // If `redirectToCheckout` fails due to a browser or network
+	            // error, display the localized error message to your customer
+	            alert(result.error.message);
+	        }
+	    } else {
+	        alert('An error occurred. Please try again.');
+	    }
+	});
+</script>
+{% endblock %}

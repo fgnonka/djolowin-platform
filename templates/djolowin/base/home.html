@@ -1,0 +1,61 @@
+{% extends "djolowin/main.html" %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'base/css/home.css/' %}" />
+
+<main>
+	<h1>Welcome <strong>{{ user.username }}</strong></h1>
+	<div class="card-container">
+		{% comment %} {% include "djolowin/base/search_form.html" %} {% endcomment %}
+	<h4>New cards for sale</h4>
+	<div class="container-fluid">
+		<a href="{% url 'playercard:playercard-list' %}">
+			<h5>See all cards</h5>
+	</div>
+	<div class="row">
+        {% for playercard in playercards %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card h-100">
+				{% if playercard.rarity.name == 'Rare' %}
+				<img
+					src="{% static 'images/soccer-rare.jpg' %}"
+					alt="Stick figure image"
+					class="img-fluid"
+					style="width: 200px; height: 300px;"
+					/>
+				{% else %}
+				<img
+					src="{% static 'images/soccer_figure.png' %}"
+					alt="Stick figure image"
+					class="img-fluid"
+					style="width: 200px; height: 300px;"
+					/>
+				{% endif %}
+				<a href="{{ playercard.get_absolute_url }}" class="stretched-link">
+                <div class="card-body">
+					</a>
+                    	<h5 class="card-title">{{ playercard.player.name }}</h5>
+                    	<p class="card-text">Rarity: {{ playercard.rarity.name }}</p>
+                    	<br>
+						<h6 class="card-text">
+							Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}
+							<br />
+							Age: {{playercard.player.date_of_birth}}
+							<br />
+							Country: {{ playercard.player.country.country.name }}
+						</h6>
+						{% if playercard.for_sale and request.user != playercard.owner %}
+						<button type="button" class="btn btn-outline-success">
+							Purchase for {{ playercard.price }} DJOBA
+						</button>
+					{% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No cards found in your collection. Try adjusting your filters or search.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+{% endblock content %}

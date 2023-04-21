@@ -1,0 +1,17 @@
+{% extends 'djolowin/main.html' %} {% block content %}
+<h1>Card Bundles</h1>
+<div class="card-bundle-container">
+	{% for bundle in bundles %}
+	<div class="card-bundle">
+		{% if bundle.cover_image %}
+		<img src="{{ bundle.cover_image.url }}" alt="{{ bundle.name }} cover image" />
+		{% endif %}
+		<h2>{{ bundle.name }}</h2>
+		<p>{{ bundle.description }}</p>
+		<p>Price: {{ bundle.price }}</p>
+		<a href="{% url 'bundle:bundle_purchase' bundle.id %}">Purchase Bundle</a>
+	</div>
+	{% endfor %}
+</div>
+{% include 'djolowin/pagination.html' %}
+{% endblock %}

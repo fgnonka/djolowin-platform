@@ -1,0 +1,52 @@
+<!-- Add the following code for compact pagination navigation -->
+{% if is_paginated %}
+<nav aria-label="Card collection pagination">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1&search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">First</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+        </li>
+        {% endif %}
+
+        {% for i in paginator.page_range %}
+        {% if i >= page_obj.number|add:"-3" and i <= page_obj.number|add:"3" %}
+        {% if page_obj.number == i %}
+        <li class="page-item active">
+            <span class="page-link">{{ i }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">{{ i }}</a>
+        </li>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ paginator.num_pages }}&search={{ request.GET.search }}&sort_by={{ request.GET.sort_by }}&order={{ request.GET.order }}">Last</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Next</span>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link">Last</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

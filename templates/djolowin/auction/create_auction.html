@@ -1,0 +1,7 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<h1>Create Auction for {{card.player.name}}</h1>
+<form method="post">
+	{% csrf_token %} {{ form.as_p }}
+	<button type="submit">Create Auction</button>
+</form>
+{% endblock %}

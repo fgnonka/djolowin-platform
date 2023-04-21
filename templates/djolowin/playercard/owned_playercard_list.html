@@ -1,0 +1,56 @@
+{% extends "djolowin/main.html" %} 
+
+{% block content %}
+<h1>My Card Collection</h1>
+
+<div class="container">
+    <form method="get" class="mb-3">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" name="search" value="{{ request.GET.search }}" placeholder="Search by player name">
+            </div>
+            <div class="col">
+                <select name="sort_by" class="form-select">
+                    <option value="player__name" {% if request.GET.sort_by == "player__name" %}selected{% endif %}>Player Name</option>
+                    <option value="rarity__name" {% if request.GET.sort_by == "rarity__name" %}selected{% endif %}>Rarity</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="order" class="form-select">
+                    <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Filter & Sort</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        {% for playercard in playercards %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <a href="{{ playercard.get_absolute_url }}">
+            <div class="card h-100">
+				<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+                <div class="card-body">
+                    <h5 class="card-title">{{ playercard.player.name }}</h5>
+                </a>
+                <p class="card-text">Owner: {{ playercard.owner.username}}</p>
+                <p>Position: {{ playercard.player.position }}</p>
+                <p class="card-text">{{ playercard.rarity.name }}</p>
+				<p>Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}</p>
+                    <br>
+                    <p class="card-text">{{ playercard.price }} DJOBA</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No cards found in your collection. Try adjusting your filters or search.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include "djolowin/pagination.html" with page=page_obj %}
+
+{% endblock %}

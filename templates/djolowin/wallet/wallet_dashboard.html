@@ -1,0 +1,14 @@
+{% extends 'djolowin/main.html' %} {% block content %}
+
+<h2>Wallet Balance</h2>
+<p>Your current total balance is {{ wallet.balance }} DJOBA with {{ wallet.available_balance }} DJOBA available to spend.</p>
+<p> {{ wallet.reserved_balance }} DJOBA is reserved for pending transactions in Auctions.</p>
+<p>View your transaction history</p>
+<ul>
+	<li><a href="{% url 'transaction:history' %}">History</a></li>
+</ul>
+<p>Go here to recharge your account</p>
+<ul>
+	<li><a href="{% url 'currency:currency_package_list' %}">Recharge</a></li>
+</ul>
+{% endblock %}

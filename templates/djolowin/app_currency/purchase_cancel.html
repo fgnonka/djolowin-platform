@@ -1,0 +1,8 @@
+{% extends 'djolowin/main.html' %}
+
+
+{% block content %}
+    <h1>Transaction Canceled</h1>
+    <p>Your purchase was canceled. Your in-app currency balance remains unchanged.</p>
+    <a href="{% url 'base:home' %}">Go to Home</a>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>My Card Collection</h1>
+
+  <div class="card-filters">
+    <h3>Filters</h3>
+    <form method="get" action="{% url 'my_card_collection' %}">
+      <label for="collection-filter">Collection:</label>
+      <select name="collection" id="collection-filter">
+        <option value="">All</option>
+        {% for collection in collections %}
+          <option value="{{ collection.id }}" {% if collection.id|slugify == collection_slug %}selected{% endif %}>{{ collection }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Card</th>
+        <th>Collection</th>
+        <th>Quantity</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for card_collection in card_collections %}
+        <tr>
+          <td>{{ card_collection.card }}</td>
+          <td>{{ card_collection.collection }}</td>
+          <td>{{ card_collection.quantity }}</td>
+          <td><a href="#">Sell</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4">No cards found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

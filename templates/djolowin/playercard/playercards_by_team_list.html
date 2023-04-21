@@ -1,0 +1,32 @@
+{% extends "djolowin/main.html" %} {% block content %}
+
+<section class="card-list">
+	{% for playercard in playercards %}
+	<article class="card">
+		<header class="card-header">
+			<a class="team-name" href="{{ playercard.get_absolute_url }}"><h2>{{ playercard.player.name }}</h2></a>
+		</header>
+		<div class="card-body">
+			<a class="player-avatar" href="#"
+				><img src="https://picsum.photos/200/200" alt="exposed brick wall in a hipster cafe" class="img-fluid"
+			/></a>
+			<h6 class="card-text text-center">
+				Index:{{ playercard.index }}
+				<br />
+				Rarity: {{ playercard.rarity }}
+				<br />
+				Age: {{ playercard.player.date_of_birth }}
+				<br />
+				Country: {{ playercard.player.country.country.name }}
+			</h6>
+			<a href= {% url 'auction:create-auction' playercard.slug %} button type="button" class="buy-button">
+				Auction it
+				<span class="badge"></span>
+			</a>
+		</div>
+	</article>
+	{% endfor %}
+	{% include "djolowin/pagination.html" with page=page_obj %}
+</section>
+
+{% endblock content %}
