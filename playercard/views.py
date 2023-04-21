@@ -65,15 +65,14 @@ class PlayerCardListView(ListView):
         if form.is_valid():
             query = Q()
             playercards = list_of_cards_to_display()
-            if form.cleaned_data["name"]:
+            if form.cleaned_data.get("name"):
                 query &= Q(player__name__icontains=form.cleaned_data["name"])
-            if form.cleaned_data["team"]:
+            if form.cleaned_data.get("team"):
                 query &= Q(player__team__name__icontains=form.cleaned_data["team"])
-            if form.cleaned_data["position"]:
+            if form.cleaned_data.get("position"):
                 query &= Q(player__position__icontains=form.cleaned_data["position"])
-            if form.cleaned_data["rarity"]:
+            if form.cleaned_data.get("rarity"):
                 query &= Q(rarity__name__icontains=form.cleaned_data["rarity"])
-            print(query)
             playercards = playercards.filter(query)
             paginator = Paginator(playercards, settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY)
             page = request.GET.get("page")
@@ -102,6 +101,8 @@ class PlayerCardListView(ListView):
         )
         context["teams"] = Team.objects.all()
         context["positions"] = Player.POSITION_CHOICES
+        context["playercards"] = context["page_obj"]
+
         return context
 
 

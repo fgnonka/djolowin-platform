@@ -5,6 +5,7 @@
 	<h4>All cards for sale</h4>
 	<div class="container">
 		<h1>Player Card Search</h1>
+		{% if user.is_authenticated %}
 		<form method="post" action="{% url 'playercard:playercard-list' %}">
 			{% csrf_token %}
 			<div class="form-row">
@@ -13,22 +14,27 @@
 					{{ filter_form.name }}
 				</div>
 				<div class="col">
-					{{ filter_form.position.label_tag }}
-					{{ filter_form.position }}
+					{{ filter_form.rarity.label_tag }}
+					{{ filter_form.rarity }}
 				</div>
 				<div class="col">
 					{{ filter_form.team.label_tag }}
 					{{ filter_form.team }}
 				</div>
 				<div class="col">
-					{{ filter_form.rarity.label_tag }}
-					{{ filter_form.rarity }}
+					{{ filter_form.position.label_tag }}
+					{% for position in filter_form.position %}
+					<div class="form-check">
+						{{ position }}
+						<label class="form-check-label">{{ position.choice_label }}</label>
+					</div>
+					{% endfor %}
 				</div>
 				<div class="col">
 					<button type="submit" class="btn btn-primary">Filter</button>
 				</div>
 			</div>
-		</form>
+		{% endif %}
 	</div>
 	<div class="row">
         {% for playercard in playercards %}
@@ -77,7 +83,7 @@
         </div>
         {% endfor %}
     </div>
+	{% include "djolowin/pagination.html" with paginator=playercards.paginator page_obj=playercards %}
 </main>
-{% include "djolowin/pagination.html" with page=page_obj %}
 
 {% endblock content %}
