@@ -1,7 +1,7 @@
 {% extends "djolowin/main.html" %} 
 
 {% block content %}
-<h1>My Card Collection</h1>
+<h1>My Cards</h1>
 
 <div class="container">
     <form method="get" class="mb-3">
@@ -31,16 +31,17 @@
         <div class="col-md-4 col-lg-3 mb-4">
             <a href="{{ playercard.get_absolute_url }}">
             <div class="card h-100">
-				<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+				<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-responsive " />
                 <div class="card-body">
-                    <h5 class="card-title">{{ playercard.player.name }}</h5>
                 </a>
+                <h5 class="card-title">{{ playercard.player.name }}</h5>
                 <p class="card-text">Owner: {{ playercard.owner.username}}</p>
                 <p>Position: {{ playercard.player.position }}</p>
-                <p class="card-text">{{ playercard.rarity.name }}</p>
+                <p class="card-text">Rarity: {{ playercard.rarity.name }}</p>
+                <p class="card-text">Team: {{ playercard.player.team }}</p>
 				<p>Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}</p>
                     <br>
-                    <p class="card-text">{{ playercard.price }} DJOBA</p>
+                    <p class="card-text text-primary">Price: {{ playercard.price }} DJOBA</p>
                 </div>
             </div>
         </div>

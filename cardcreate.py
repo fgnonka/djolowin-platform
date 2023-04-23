@@ -16,7 +16,7 @@ from playercard.models import PlayerCard, CardRarity
 
 # Fetch instances of the related models
 owners = list(CustomUser.objects.all())
-players = list(Player.objects.filter(name__icontains="Egyptian Player"))
+players = list(Player.objects.all())
 rarities = list(CardRarity.objects.all())
 
 

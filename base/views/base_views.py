@@ -13,11 +13,9 @@ from account.decorators import user_is_active
 @login_required
 def homeview(request):
     playercards = list_of_cards_to_display("homeview")
-    positions = PlayerCard.POSITIONS
 
     context = {
         "playercards": playercards,
-        "positions": positions,
     }
     return render(request, "djolowin/base/home.html", context)
 

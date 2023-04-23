@@ -7,8 +7,8 @@ admin.site.register(PlayerCardLike)
 
 @admin.register(PlayerCard)
 class PlayerCardAdmin(admin.ModelAdmin):
-    list_display = ("player", "rarity", "slug", "price", "date_created", "date_updated")
-    list_filter = ("rarity",)
+    list_display = ("owner","player", "rarity", "slug", "price", "date_created", "date_updated")
+    list_filter = ("rarity", "player__team", "for_sale")
     list_editable = ("price",)
     search_fields = ("player", "description")
     ordering = ("-date_created",)

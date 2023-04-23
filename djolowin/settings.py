@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    'django.contrib.humanize',
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     "collection.apps.CollectionConfig",
     "order.apps.OrderConfig",
     "playercard.apps.PlayercardConfig",
+    "reward.apps.RewardConfig",
     "transaction.apps.TransactionConfig",
     "wallet.apps.WalletConfig",
 ]

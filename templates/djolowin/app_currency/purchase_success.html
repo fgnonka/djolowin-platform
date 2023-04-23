@@ -1,8 +1,8 @@
-{% extends 'djolowin/main.html' %}
+{% extends 'djolowin/main.html' %} {% load humanize %}
 
 {% block content %}
     <h1>Success!</h1>
     <p>Your purchase was successful. Your in-app currency balance has been updated.</p>
-    <p>Your new balance is {{balance}} DJOBA</p>
+    <p>Your new balance is {{balance|floatformat:"0"|intcomma}} DJOBA</p>
     <a href="{% url 'base:home' %}">Go to home</a>
 {% endblock %}

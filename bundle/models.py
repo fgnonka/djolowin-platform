@@ -13,7 +13,7 @@ class Bundle(models.Model):
     is_sold = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_sold = models.DateTimeField(null=True, blank=True)
-    sold_to = models.OneToOneField('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
+    sold_to = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
     price = models.IntegerField(default=0)
 
     def __str__(self) -> str:

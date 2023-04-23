@@ -66,13 +66,13 @@
 		</div>
 		{% endif %}
 		{% if request.user == playercard.owner %}
-		<button id="modify-price-btn">Modify Price</button>
+		<button id="modify-price-btn">Modify Card</button>
 		{% if not auction %}
 		<a href="{% url 'auction:create_auction' card_pk=playercard.pk %}">Create an Auction for this card</a>
 		{% endif %}
 		<div id="modify-price-form" style="display: none">
 			<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
-				{% csrf_token %} {{ price_form.as_p }}
+				{% csrf_token %} {{ form.as_p }}
 				<button type="submit">Update Price</button>
 			</form>
 		</div>

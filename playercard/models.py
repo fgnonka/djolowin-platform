@@ -29,6 +29,7 @@ class CardRarity(models.Model):
 class PlayerCard(models.Model):
     """The base playercard object"""
 
+    
     for_sale = models.BooleanField(default=True)
     is_public = models.BooleanField(
         _("Is public"),
@@ -37,10 +38,18 @@ class PlayerCard(models.Model):
         help_text=_("Show this playercard in search results and portfolios."),
     )
     owner = models.ForeignKey(
-        "account.CustomUser", on_delete=models.SET_NULL, null=True, blank=True, related_name="owned_cards"
+        "account.CustomUser",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="playercards",
     )
     player = models.ForeignKey(
-        "base.Player", on_delete=models.CASCADE, null=True, blank=True, related_name="cards"
+        "base.Player",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="playercards",
     )
     rarity = models.ForeignKey(
         "playercard.CardRarity",
@@ -60,7 +69,7 @@ class PlayerCard(models.Model):
     )
     # This field is used by Haystack to reindex search
     date_updated = models.DateTimeField(_("Date updated"), auto_now=True, db_index=True)
-
+    is_locked = models.BooleanField(default=False)
     class Meta:
         ordering = ["player"]
         verbose_name = _("Playercard")
@@ -81,23 +90,17 @@ class PlayerCard(models.Model):
     def teams(self):
         return [(t.id, t.name) for t in Team.objects.all()]
 
-
-    POSITIONS = [
-        ("GK", "Goalkeeper"),
-        ("DEF", "Defender"),
-        ("MID", "Midfielder"),
-        ("FWD", "Forward"),
-    ]
-
     @property
     def rarities(self):
         return [(r.id, r.name) for r in CardRarity.objects.all()]
 
     RARITIES = rarities
-    
+
     @property
     def get_total_card_index(self):
-        allcards = PlayerCard.objects.filter(Q(rarity=self.rarity) & Q(player=self.player))
+        allcards = PlayerCard.objects.filter(
+            Q(rarity=self.rarity) & Q(player=self.player)
+        )
         return allcards.count()
 
     @staticmethod
@@ -134,10 +137,14 @@ class PlayerCard(models.Model):
             self.slug = slugify(value, allow_unicode=False)
         return super().save(*args, **kwargs)
 
+
 class PlayerCardLike(models.Model):
-    playercard = models.ForeignKey(PlayerCard, on_delete=models.CASCADE, related_name="likes")
-    user = models.ForeignKey("account.CustomUser", on_delete=models.CASCADE, related_name="liked_cards")
+    playercard = models.ForeignKey(
+        PlayerCard, on_delete=models.CASCADE, related_name="likes"
+    )
+    user = models.ForeignKey(
+        "account.CustomUser", on_delete=models.CASCADE, related_name="liked_cards"
+    )
 
     def __str__(self):
         return self.user.username
-

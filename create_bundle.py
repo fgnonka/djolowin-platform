@@ -18,7 +18,7 @@ def create_bundles():
     # Loop through rarities and create bundles for each rarity
     for rarity in rarities:
         # Get all available cards of the current rarity without an owner
-        available_cards = PlayerCard.objects.filter(Q(rarity=rarity)& Q(owner=None) & Q(index__gt=0))
+        available_cards = PlayerCard.objects.filter(Q(rarity=rarity)& Q(owner=None) & Q(index__gt=30))
         bundle_index = 1
         bundle_size = 10
         # While there are enough cards for a bundle
@@ -26,6 +26,7 @@ def create_bundles():
             card_bundle = Bundle(
                 rarity=rarity,
                 name=f"{rarity.name} Bundle {bundle_index}",
+                price=25000,
             )
             # Randomly select cards from the available_cards queryset
             selected_cards = random.sample(list(available_cards), bundle_size)
@@ -41,8 +42,7 @@ def create_bundles():
 
                 print(f"Card {card.slug} added to bundle {card_bundle.name}")
             # Update the amount of available cards
-            available_cards = PlayerCard.objects.filter(Q(rarity=rarity) & Q(owner=None) & ~Q(bundle__isnull=False))
-
+            available_cards = PlayerCard.objects.filter(Q(rarity=rarity) & Q(index__gt=30) & Q(owner=None) & ~Q(bundle__isnull=False))
     print("Card bundles created.")
 
 

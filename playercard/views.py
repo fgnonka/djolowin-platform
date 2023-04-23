@@ -6,30 +6,35 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404, HttpResponsePermanentRedirect
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, TemplateView, ListView, View
+from django.views.generic import DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from auction.models import Auction
-from base.models import Team, Player
 from playercard.models import PlayerCard
 from playercard.utils import list_of_cards_to_display
 from playercard.signals import playercard_viewed
 from transaction.utils import create_card_purchase_transaction
 from wallet.models import UserWallet
 
-from .forms import PriceForm, PlayerCardFilterForm
+from .forms import CardForm, PlayerCardFilterForm
 from .filters import PlayerCardFilter
 
 
-class UpdatePriceView(LoginRequiredMixin, View):
+class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
+    model = PlayerCard
+    form_class = CardForm
+    template_name = "djolowin/playercard/playercard_detail.html"
+
     def post(self, request, pk):
         playercard = get_object_or_404(PlayerCard, pk=pk, owner=request.user)
-        form = PriceForm(request.POST)
+        form = CardForm(request.POST)
         if form.is_valid():
             playercard.price = form.cleaned_data["price"]
+            playercard.for_sale = form.cleaned_data["for_sale"]
+            playercard.is_public = form.cleaned_data["is_public"]
             playercard.save()
         return redirect("playercard:playercard-detail", pk=playercard.pk)
 
@@ -48,7 +53,7 @@ class PlayerCardDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["price_form"] = PriceForm()
+        context["form"] = CardForm(playercard_instance=self.object)
         context["auction"] = Auction.objects.filter(card=self.object)
         return context
 
@@ -56,54 +61,39 @@ class PlayerCardDetailView(DetailView):
 class PlayerCardListView(ListView):
     """Alternative Playercard Listview"""
 
+    model = PlayerCard
     template_name = "djolowin/playercard/all_playercards.html"
     context_object_name = "playercards"
     paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
-
-    def post(self, request, *args, **kwargs):
-        form = PlayerCardFilterForm(request.POST)
-        if form.is_valid():
-            query = Q()
-            playercards = list_of_cards_to_display()
-            if form.cleaned_data.get("name"):
-                query &= Q(player__name__icontains=form.cleaned_data["name"])
-            if form.cleaned_data.get("team"):
-                query &= Q(player__team__name__icontains=form.cleaned_data["team"])
-            if form.cleaned_data.get("position"):
-                query &= Q(player__position__icontains=form.cleaned_data["position"])
-            if form.cleaned_data.get("rarity"):
-                query &= Q(rarity__name__icontains=form.cleaned_data["rarity"])
-            playercards = playercards.filter(query)
-            paginator = Paginator(playercards, settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY)
-            page = request.GET.get("page")
-            try:
-                playercards = paginator.page(page)
-            except PageNotAnInteger:
-                playercards = paginator.page(1)
-            except EmptyPage:
-                playercards = paginator.page(paginator.num_pages)
-            return render(
-                request,
-                "djolowin/playercard/all_playercards.html",
-                {"playercards": playercards, "filter_form": form},
-            )
-
-    def get_queryset(self):
-        # The method below is to only show playercards that are for sale and that are not from the MasterTeam COllection
-        playercards = list_of_cards_to_display()
-        return playercards
+    filterset_class = PlayerCardFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["filter_form"] = PlayerCardFilterForm(self.request.GET)
-        context["filter"] = PlayerCardFilter(
-            self.request.GET, queryset=self.get_queryset()
-        )
-        context["teams"] = Team.objects.all()
-        context["positions"] = Player.POSITION_CHOICES
-        context["playercards"] = context["page_obj"]
+        filter_data = self.request.GET.copy()
+        filter_form = PlayerCardFilterForm(filter_data)
+        context["filter_form"] = filter_form
+        context["filter_params"] = filter_data.urlencode()
 
         return context
+
+    def get_queryset(self):
+        # The method below is to only show playercards that are for sale and that are not from the MasterTeam COllection
+        queryset = list_of_cards_to_display()
+        filter_form = PlayerCardFilterForm(self.request.GET or None)
+        if filter_form.is_valid():
+            query = Q()
+            if filter_form.cleaned_data.get("name"):
+                query &= Q(player__name__icontains=filter_form.cleaned_data["name"])
+            if filter_form.cleaned_data.get("team"):
+                query &= Q(player__team__slug__exact=filter_form.cleaned_data["team"])
+            if filter_form.cleaned_data.get("position"):
+                query &= Q(
+                    player__position__icontains=filter_form.cleaned_data["position"]
+                )
+            if filter_form.cleaned_data.get("rarity"):
+                query &= Q(rarity__name__icontains=filter_form.cleaned_data["rarity"])
+            queryset = queryset.filter(query)
+        return queryset
 
 
 class UserPlayerCardListView(ListView):

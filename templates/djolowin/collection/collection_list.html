@@ -1,0 +1,32 @@
+{% extends "djolowin/main.html" %} {% block content %} {% load humanize %} {% load static %}
+<h1>Collections</h1>
+<body>
+	{% for collection, data in collection_progress.items %}
+	<h2>{{ collection.name }}</h2>
+	<h2>Amount to win: {{ collection.reward.amount|intcomma }} DJOBA</h2>
+	<div class="progress">
+		<div
+			class="progress-bar"
+			role="progressbar"
+			style="width: {{ data.progress }}%;"
+			aria-valuenow="{{ data.progress }}"
+			aria-valuemin="0"
+			aria-valuemax="100">
+			{{ data.progress|floatformat:0 }}%
+		</div>
+	</div>
+	<h3>Owned Cards</h3>
+	<ul>
+		{% for card in data.user_cards %}
+		<li>{{ card.player.name }}</li>
+		{% endfor %}
+	</ul>
+	<h3>Missing Cards</h3>
+	<ul>
+		{% for card in data.missing_cards %}
+		<li>{{ card.player.name }}</li>
+		{% endfor %}
+	</ul>
+	{% endfor %}
+</body>
+{% endblock %}

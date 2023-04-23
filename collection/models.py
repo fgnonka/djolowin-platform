@@ -4,6 +4,7 @@ from django.urls import reverse
 
 
 from base.models import Team
+from playercard.models import CardRarity
 
 
 
@@ -11,10 +12,11 @@ User = settings.AUTH_USER_MODEL
 
 class Collection(models.Model):
     name=models.CharField(max_length=100)
+    rarity = models.ForeignKey('playercard.CardRarity', on_delete=models.CASCADE, blank=True, null=True)
     description=models.TextField()
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     cards = models.ManyToManyField('playercard.PlayerCard')
-    reward = models.PositiveIntegerField(help_text="Reward in DJOBA coins", default=100000)
+    reward = models.ForeignKey('reward.DJOBAReward', on_delete=models.CASCADE, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     
     def __str__(self):

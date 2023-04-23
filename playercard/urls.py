@@ -21,7 +21,7 @@ urlpatterns = [
         views.PlayerCardDetailView.as_view(),
         name="playercard-detail",
     ),
-        path('card/<int:pk>/update-price/', views.UpdatePriceView.as_view(), name='update_price'),
+        path('card/<int:pk>/update-price/', views.UpdatePlayerCardView.as_view(), name='update_price'),
     path(
         "team/<str:slug>/", views.playercards_by_team_list, name="playercards-by-team"
     ),    
