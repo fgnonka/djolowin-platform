@@ -30,7 +30,7 @@ def check_auction_ending_soon():
         if auction.is_ending_soon:
             send_mail(
                 "Auction Ending Soon",
-                f"The auction for {auction.card.name} is ending in less than 1hour.",
+                f"The auction for {auction.card} is ending in less than 1hour.",
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email for user in auction.watchers.all()],
                 fail_silently=False,

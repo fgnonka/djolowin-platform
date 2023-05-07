@@ -12,6 +12,7 @@ class CustomerEvents:
     EMAIL_CHANGED = "email_changed"
     PHONE_CHANGE_REQUEST = "phone_change_request"
     PHONE_CHANGED = "phone_changed"
+    VERIFICATION_EMAIL_SENT = "verification_email_sent"
 
     # Trade related events
     PLACED_SINGLE_ORDER = "placed_single_order"  # created a single item order
@@ -57,6 +58,7 @@ class CustomerEvents:
             "The user requested to change the account's email address.",
         ),
         (EMAIL_CHANGED, "The account email address was changed"),
+        (VERIFICATION_EMAIL_SENT, "A verification email was sent to the customer"),
         (CUSTOMER_DELETED, "A customer was deleted"),
         (NAME_ASSIGNED, "A customer's name was edited"),
         (EMAIL_ASSIGNED, "A customer's email address was edited"),

@@ -2,6 +2,11 @@ from enum import Enum
 
 
 class AccountErrorCode(Enum):
+    """This class is used to define the error codes for the account app.
+
+    Args:
+        Enum (_type_): The type of the error code.
+    """
     ACTIVATE_OWN_ACCOUNT = "activate_own_account"
     ACTIVATE_SUPERUSER_ACCOUNT = "activate_superuser_account"
     DUPLICATED_INPUT_ITEM = "duplicated_input_item"
@@ -38,6 +43,7 @@ class AccountErrorCode(Enum):
 
 
 class PermissionGroupErrorCode(Enum):
+    """This class is used to define the error codes for the permission group."""
     ASSIGN_NON_STAFF_MEMBER = "assign_non_staff_member"
     DUPLICATED_INPUT_ITEM = "duplicated_input_item"
     CANNOT_REMOVE_FROM_LAST_GROUP = "cannot_remove_from_last_group"

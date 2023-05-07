@@ -1,5 +1,7 @@
-from django.db import models
+from uuid import uuid4
+
 from django.core.mail import send_mail
+from django.db.models import JSONField
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import (
@@ -14,10 +16,13 @@ from phonenumber_field.modelfields import PhoneNumber, PhoneNumberField
 from django_countries.fields import CountryField, Country
 from PIL import Image
 
-from .manager import CustomUserManager
 from wallet.models import UserWallet
+from .manager import CustomUserManager
+from . import CustomerEvents
+
 
 class Address(models.Model):
+    """ A model to represent a user's address."""
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
     address = models.CharField(max_length=255, blank=True)
@@ -28,6 +33,7 @@ class Address(models.Model):
 
     @property
     def full_name(self):
+        """ Property returning the full name of the user."""
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
@@ -60,9 +66,9 @@ class Address(models.Model):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    # Each `User` needs a human-readable unique identifier that we can use to
-    # represent the `User` in the UI. We want to index this column in the
-    # database to improve lookup performance.
+    """ Each `User` needs a human-readable unique identifier that we can use to
+    represent the `User` in the UI. We want to index this column in the
+    database to improve lookup performance"""
     username = models.CharField(
         _("username"),
         db_index=True,
@@ -92,7 +98,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # User Status
     # A timestamp representing when this object was created.
     date_joined = models.DateTimeField(_("Date joined"), auto_now_add=True)
-
+    last_login = models.DateTimeField(_("Last login"), blank=True, null=True)
     # A timestamp representing when this object was created.
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -115,6 +121,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(_("Verified"), default=False)
     note = models.TextField(null=True, blank=True)
     search_document = models.TextField(blank=True, default="")
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
+    
+    
 
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
@@ -124,8 +133,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # objects of this type.
     objects = CustomUserManager()
 
-    def __str__(self) -> str:
-        return f"User #{self.pk}: {self.username}"
 
     class Meta:
         ordering = ("pk",)
@@ -142,27 +149,28 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         super().__init__(*args, **kwargs)
         self._effective_permissions = None
 
+    def __str__(self):
+        """ Human-readable representation that overrides the default one that
+        returns the username field."""
+        return str(self.uuid)
+    
     def save(self, *args, **kwargs):
         self.search_document = self.get_search_document()
         if not self.username:
             self.username = self.email
         super().save(*args, **kwargs)
-        
+
         img = Image.open(self.profile_img.path)
-        
+
         if img.height > 300 or img.width > 300:
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.profile_img.path)
-            
+
     def clean(self):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
-        
-    @property
-    def get_wallet(self):
-        return UserWallet.objects.get(user=self)
-    
+
     @property
     def get_full_name(self):
         """
@@ -173,8 +181,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             return full_name.strip()
         else:
             return self.email
-        
+
     def get_search_document(self):
+        """ Returns a string used for indexing this object in a search engine."""
         document = self.username
         if self.first_name:
             document += f" {self.first_name}"
@@ -183,15 +192,37 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if self.email:
             document += f" {self.email}"
         if self.phone_number:
-            document += f" {self.phone_number.as_e164}"
+            document += f" {self.phone_number}"
         if self.country:
             document += f" {self.country.name}"
         return document
-    
+
     def email_user(self, subject, message, from_email=None, **kwargs):
+        """ Sends an email to this user."""
         send_mail(
             subject, message, from_email, [self.email], fail_silently=False, **kwargs
         )
-        
+
     def get_absolute_url(self):
+        """ Return the URL to the user detail page."""
         return reverse("account:user-detail", kwargs={"username": self.username})
+
+
+class CustomerEvent(models.Model):
+    """ Records events that happened during the customer lifecycle."""
+    date = models.DateTimeField(_("Date"), auto_now_add=True)
+    event_type = models.CharField(
+        _("Event type"),
+        max_length=255,
+        choices=[
+            (type_name.upper(), type_name) for type_name, _ in CustomerEvents.CHOICES
+        ],
+    )
+    user = models.ForeignKey(CustomUser, related_name="events", on_delete=models.CASCADE, null=True)
+    parameters = JSONField(_("Event parameters"), blank=True, default=dict)
+    
+    class Meta:
+        ordering = ("date",)
+    
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(type={self.event_type!r}, user={self.user!r})"

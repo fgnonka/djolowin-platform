@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "rest_framework",
-    "crispy_forms",
     "graphene_django",
     "phonenumber_field",
     # local apps
@@ -59,7 +58,9 @@ INSTALLED_APPS = [
     "base",
     "bundle",
     "collection",
+    "communication",
     "core",
+    'djolowin_graphql',
     "order",
     "playercard",
     "reward",
@@ -67,7 +68,6 @@ INSTALLED_APPS = [
     "wallet",
 ]
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -83,6 +83,7 @@ ROOT_URLCONF = "djolowin.urls"
 
 
 context_processors = [
+    "communication.notifications.context_processors.notifications",
     "django.template.context_processors.debug",
     "django.template.context_processors.request",
     "django.contrib.auth.context_processors.auth",
@@ -161,7 +162,8 @@ USE_TZ = True
 
 
 # Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# Example: "/home/media/media.lawrence.com/"# URL that handles the media
+# served \from MEDIA_ROOT. Make sure to use a
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # trailing slash if there is a path component (optional in other cases).
@@ -204,6 +206,7 @@ DEFAULT_DECIMAL_PLACES = 2
 DEFAULT_MAX_DIGITS = 12
 DEFAULT_CURRENCY_CODE_LENGTH = 3
 DJOLOWIN_PLAYERCARD_PAGINATE_BY = 8
+DJOLOWIN_NOTIFICATIONS_PER_PAGE = 20
 DJOLOWIN_SAVE_SENT_EMAILS_TO_DB = True
 
 # Email server configuration
@@ -250,5 +253,11 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
+
+
+# GraphQL settings
+GRAPHENE = {   
+    "SCHEMA": "djolowin_graphql.account.schema.schema",
+}
 
 

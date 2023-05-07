@@ -14,14 +14,14 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from auction.models import Auction
-from playercard.models import PlayerCard
+from base.models import Player
+from playercard.models import PlayerCard, CardRarity
 from playercard.utils import list_of_cards_to_display
 from playercard.signals import playercard_viewed
 from transaction.utils import create_card_purchase_transaction
 from wallet.models import UserWallet
 
 from .forms import CardForm, PlayerCardSearchForm
-from .filters import PlayerCardFilter
 from .signals import completed_card_purchase
 
 
@@ -74,36 +74,44 @@ class PlayerCardListView(ListView):
     template_name = "djolowin/playercard/all_playercards.html"
     context_object_name = "playercards"
     paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
-
+    POSITION_CHOICES = Player.POSITION_CHOICES
+    RARITY_CHOICES = [(rarity.name, rarity.name) for rarity in CardRarity.objects.all()]
 
     def get_queryset(self):
         # The method below is to only show playercards that are for sale and that are not from the MasterTeam COllection
         queryset = list_of_cards_to_display()
-        search_query = self.request.GET.get("search_query", '')
-        filter_form = PlayerCardSearchForm(self.request.GET)
-        if filter_form.is_valid():
-            query = Q()
-            if filter_form.cleaned_data.get("name"):
-                query &= Q(player__name__icontains=filter_form.cleaned_data["name"])
-            if filter_form.cleaned_data.get("team"):
-                query &= Q(player__team__in=filter_form.cleaned_data.get("team"))
-            if filter_form.cleaned_data.get("position"):
-                query &= Q(
-                    player__position__in=filter_form.cleaned_data["position"]
-                )
-            if filter_form.cleaned_data.get("rarity"):
-                query &= Q(rarity__name__icontains=filter_form.cleaned_data["rarity"])
-            queryset = queryset.filter(query)
-            if search_query:
-                queryset = queryset.filter(Q(player__name__icontains=search_query))
-        return queryset
+        search = self.request.GET.get("search")
+        rarity = self.request.GET.get("rarity")
+        team = self.request.GET.get("team")
+        position = self.request.GET.get("position"  )
+        print(search, rarity, team, position)
+        
+        query = Q()
+        if search:
+            query &= Q(player__name__icontains=search)
+        if rarity:
+            query &= Q(rarity__name=rarity)
+        if team:
+            query &= Q(player__team__id=team)
+        if position:
+            query &= Q(player__position=position)
+            
+        sort_by = self.request.GET.get("sort_by")
+        order = self.request.GET.get("order")
+        queryset = queryset.filter(query)
 
+        if sort_by:
+            if order == "desc":
+                sort_by = f"-{sort_by}"
+            queryset = queryset.filter(query).order_by(sort_by)
+        return queryset
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        filter_form = PlayerCardSearchForm(self.request.GET)
-        context["filter_form"] = filter_form
-
+        context["rarity_choices"] = self.RARITY_CHOICES
+        context["position_choices"] = self.POSITION_CHOICES
         return context
+
 
 class UserPlayerCardListView(ListView):
     model = PlayerCard
@@ -113,7 +121,7 @@ class UserPlayerCardListView(ListView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = PlayerCard.objects.filter(owner=user)
+        queryset = self.model.objects.filter(owner=user)
 
         search = self.request.GET.get("search")
         if search:

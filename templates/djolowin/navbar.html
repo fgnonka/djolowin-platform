@@ -1,6 +1,6 @@
 {% load static %}
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+<nav class="navbar navbar-expand-lg navbar-dark">
 	<a class="navbar-brand" href="/"
 		><img
 			class="d-inline-block align-text-center"
@@ -55,14 +55,28 @@
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item" href="#">Privacy Settings</a>
-					<a class="dropdown-item" href="#">Notifications Settings</a>
+					<a class="dropdown-item" href='#'>Notifications Settings</a>
 					<a class="dropdown-item" href="#">Security</a>
 					<a class="dropdown-item" href="#">Payment Methods</a>
 					<a class="dropdown-item" href="#">Language and Location</a>
 				</div>
 			</li>
-			<li>
-				<a href="#" class="nav-link"><i class="fa fa-fw fa-bell"></i>Notification Center</a>
+			<li class="nav-item	dropdown">
+				<a class="nav-link dropdown-toggle" href="#" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					Notification Center
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<span class="notification-counter">{{ notifications.count }}</span>
+					<div class="dropdown-item">
+							{% for notification in notifications %}
+								<a class="dropdown-item" href="{% url 'communication:notifications-inbox' %}">
+									{{ notification.subject }}
+								</a>
+							{% empty %}
+								<a class="dropdown-item" href="#">No unread notifications</a>
+							{% endfor %}
+						</div>
+				</div>
 			</li>
 			<li>
 				<a href={% url 'account:logout' %} class="nav-link"><i class="fa fa-fw fa-power-off"></i>Log Out</a>
@@ -70,7 +84,7 @@
 		</ul>
 		<form class="d-flex" role="search">
 			<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-			<button class="btn btn-outline-success" type="submit">Search</button>
+			<button class="btn search-btn" type="submit">Search</button>
 		</form>
 	</div>
 </nav>

@@ -3,13 +3,13 @@
     <select name="team">
         <option value="">All teams</option>
         {% for team in teams %}
-            <option value="{{ team }}" {% if request.GET.team == team %}selected{% endif %}>{{ team }}</option>
+            <option value="{{ team.id }}" {% if request.GET.team == team.id %}selected{% endif %}>{{ team }}</option>
         {% endfor %}
     </select>
     <select name="position">
         <option value="">All positions</option>
-        {% for position in positions %}
-            <option value="{{ position }}" {% if request.GET.position == position %}selected{% endif %}>{{ position }}</option>
+        {% for label, value in positions %}
+            <option value="{{ value }}" {% if request.GET.position == value %}selected{% endif %}>{{ position }}</option>
         {% endfor %}
     </select>
     <select name="rarity">

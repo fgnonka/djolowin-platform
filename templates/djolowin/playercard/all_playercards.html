@@ -3,91 +3,41 @@
 	<h1>Player Card Search</h1>
 	<br />
 	{% if user.is_authenticated %}
-	<form method="get" action="{% url 'playercard:playercard-list' %}">
-		<div class="form-row">
-			<div class="col">{{ filter_form.name.label_tag }} {{ filter_form.name }}</div>
-			<div class="col">{{ filter_form.rarity.label_tag }} {{ filter_form.rarity }}</div>
-			<div class="col">{{ filter_form.team.label_tag }} {{ filter_form.team }}</div>
-			<div class="col">
-				{{ filter_form.position.label_tag }} {% for position in filter_form.position %}
-				<div class="form-check">{{ position }}</div>
-				{% endfor %}
-			</div>
-			<div class="col">
-				<button type="submit" class="btn btn-primary">Filter</button>
-			</div>
-		</div>
-	</form>
+	<form method="get" class="mb-3" value="{{ request.GET.search }}">
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" name="search"  placeholder="Search by player name">
+            </div>
+            <div class="col">
+                <select name="sort_by" class="form-select">
+                    <option value="player__name" {% if request.GET.sort_by == "player__name" %}selected{% endif %}>Player Name</option>
+                    <option value="rarity__name" {% if request.GET.sort_by == "rarity__name" %}selected{% endif %}>Rarity</option>
+                </select>
+            </div>
+            <div class="col">
+                <select name="order" class="form-select">
+                    <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn search-btn">Filter & Sort</button>
+            </div>
+        </div>
+    </form>
 	{% endif %}
-
 	<br />
-
 	{% if playercards %}
 	<div class="row">
 		{% for playercard in playercards %}
 		<div class="col-md-4 col-lg-3 mb-4">
-			<div class="card h-100">
-				{% if playercard.rarity.name == 'Rare' %}
-				<img
-					src="{% static 'images/soccer-rare.jpg' %}"
-					alt="Stick figure image"
-					class="img-fluid"
-					style="width: 200px; height: 300px" />
-				{% else %}
-				<img
-					src="{% static 'images/soccer_figure.png' %}"
-					alt="Stick figure image"
-					class="img-fluid"
-					style="width: 200px; height: 300px" />
-				{% endif %}
-				<div class="card-body">
-					<h5 class="card-title">{{ playercard.player.name }}</h5>
-					<p class="card-text">Rarity: {{ playercard.rarity.name }}</p>
-					<p class="card-text">Position: {{ playercard.player.position }}</p>
-					<br />
-					<h6 class="card-text">
-						Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}
-						<br />
-						Age: {{playercard.player.date_of_birth}}
-						<br />
-						Country: {{ playercard.player.team.name }}
-					</h6>
-					{% if playercard.for_sale and request.user != playercard.owner %}
-					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndPayModal">
-						Purchase for {{ playercard.price }} DJOBA
-					</button>
-					<div
-						class="modal fade"
-						id="reviewAndPayModal"
-						tabindex="-1"
-						aria-labelledby="reviewAndPayModalLabel"
-						aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="reviewAndPayModalLabel">Review and Pay</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-								</div>
-								<div class="modal-body">
-									<h6>Player Card Information</h6>
-									<p>Name: {{ playercard.player.name }}</p>
-									<p>Price: {{ playercard.price }}</p>
-
-									<h6>Your Actual Balance</h6>
-									<p>{{ request.user.get_wallet.balance }}</p>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-									<a href="{% url 'playercard:purchase-playercard' pk=playercard.pk %}" class="btn btn-primary"
-										>Confirm Purchase</a
-									>
-								</div>
-							</div>
-						</div>
-					</div>
-					{% endif %}
-				</div>
-			</div>
+			{% include "djolowin/playercard/model/playercard.html" %}
+            <div class="card-footer m-1">
+                <span class="badge badge-default rounded-pill text-dark" style="badge-color:info;">Purchase for {{ playercard.price }} DJOBA</span>
+            {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndPayModal">
+                Purchase for {{ playercard.price }} DJOBA
+            </button> {% endcomment %}
+            </div>
 		</div>
 		{% empty %}
 		<div class="col-12">
@@ -96,5 +46,5 @@
 		{% endfor %}
 	</div>
 	{% endif %}
+	{% include "djolowin/pagination.html"  %} {% endblock %}
 </div>
-{% include "djolowin/pagination.html" with search_query=request.GET.search_query|default:'' %} {% endblock %}

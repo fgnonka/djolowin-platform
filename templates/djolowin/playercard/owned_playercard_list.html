@@ -1,9 +1,9 @@
-{% extends "djolowin/main.html" %} 
+{% extends "djolowin/main.html" %} {% load static %} {% block title %}My Cards {% endblock %}
 
 {% block content %}
 <h1>My Cards</h1>
 
-<div class="container">
+<div class="container ">
     <form method="get" class="mb-3">
         <div class="row">
             <div class="col">
@@ -26,25 +26,11 @@
             </div>
         </div>
     </form>
-    <div class="row">
+	{% if playercards %}
+    <div class="row ">
         {% for playercard in playercards %}
-        <div class="col-md-4 col-lg-3 mb-4">
-            <a href="{{ playercard.get_absolute_url }}">
-            <div class="card h-100">
-				<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-responsive " />
-                <div class="card-body">
-                </a>
-                <h5 class="card-title">{{ playercard.player.name }}</h5>
-                <p class="card-text">Owner: {{ playercard.owner.username}}</p>
-                <p>Position: {{ playercard.player.position }}</p>
-                <p class="card-text">Rarity: {{ playercard.rarity.name }}</p>
-                <p class="card-text">Team: {{ playercard.player.team }}</p>
-                <p class="card-text">Locked: {{ playercard.is_locked }}</p>
-				<p>Index: {{ playercard.index }} of {{ playercard.get_total_card_index }}</p>
-                    <br>
-                    <p class="card-text text-primary">Price: {{ playercard.price }} DJOBA</p>
-                </div>
-            </div>
+		<div class="col-md-4 col-lg-3 mb-3">
+            {% include "djolowin/playercard/model/playercard.html" %}
         </div>
         {% empty %}
         <div class="col-12">
@@ -52,7 +38,8 @@
         </div>
         {% endfor %}
     </div>
+	{% endif %}
+    {% include "djolowin/pagination.html" with page=page_obj %}
 </div>
-{% include "djolowin/pagination.html" with page=page_obj %}
 
 {% endblock %}

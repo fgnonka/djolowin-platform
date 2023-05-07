@@ -1,0 +1,13 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+
+You're receiving this email because your email address has been changed to {{ new_email }}.
+If you do not recognize this change, please click on the link below to revert the change and reset your password
+{{ protocol }}://{{ domain }}{% url 'account:password-reset-confirm' uidb64=uid token=token %}
+
+If you are the one that requested the change, please ignore this email.
+
+Best regards,
+The DjoloWin Team
+{% endautoescape %}

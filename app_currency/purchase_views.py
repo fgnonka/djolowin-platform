@@ -1,8 +1,9 @@
+""" This module contains the views for purchasing currency packages. """
 import stripe
 
 from django.db import models
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -11,8 +12,8 @@ from django.views.decorators.http import require_POST
 
 from wallet.models import UserWallet
 from account.models import CustomUser
-from .models import CurrencyPackage
 from transaction.utils import create_currency_purchase_transaction
+from .models import CurrencyPackage
 
 
 
@@ -55,6 +56,7 @@ def purchase_currency_package(request, package_id):
 
 
 def purchase_success(request):
+    """ This view is called when the payment is successful."""
     user = request.user
     wallet = get_object_or_404(UserWallet, user=user)
     balance = wallet.balance
@@ -72,6 +74,7 @@ def purchase_cancel(request):
 @csrf_exempt
 @require_POST
 def stripe_webhook(request):
+    """ This view is called when a Stripe webhook is received."""
     payload = request.body
     sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
     event = None

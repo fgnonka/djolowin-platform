@@ -1,33 +1,18 @@
-import string
-import datetime
-
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.forms.widgets import (
-    PasswordInput,
-    TextInput,
-    EmailInput,
-    FileInput,
-    NumberInput,
-    DateInput,
-)
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.conf import settings
-from django.contrib.auth import forms as auth_forms
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.exceptions import ValidationError
-from django.utils.crypto import get_random_string
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext_lazy
-from django.views.decorators.debug import sensitive_post_parameters
 
-from . import validators
+from .cleaning_functions import (
+    signup_form_clean_email,
+    signup_form_clean_username,
+    update_form_clean_email,
+    update_form_clean_username,
+)
 
 User = get_user_model()
+
 
 class UserRegistrationForm(UserCreationForm):
     """A form for creating new users. Includes all the required
@@ -36,6 +21,7 @@ class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
 
     class Meta:
+        """ This class is used to define the fields that will be used in the form."""
         model = User
         fields = [
             "username",
@@ -49,21 +35,18 @@ class UserRegistrationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        email_field = User.get_email_field_name()
-        if hasattr(self, "reserved_names"):
-            reserved_names = self.reserved_names
-        else:
-            reserved_names = validators.DEFAULT_RESERVED_NAMES
-        username_validators = [
-            validators.ReservedNameValidator(reserved_names),
-            validators.validate_confusables,
-        ]
+        self.fields["username"].widget.attrs["placeholder"] = "Enter your username"
+        self.fields["email"].widget.attrs["placeholder"] = "Enter your email"
+        self.fields["password1"].widget.attrs["placeholder"] = "Enter your password"
+        self.fields["password2"].widget.attrs["placeholder"] = "Confirm your password"
+
+    def clean_username(self):
+        """ " This method is used to validate the username field against the DEFAULT_RESERVED_NAMES"""
+        return signup_form_clean_username(self)
 
     def clean_email(self):
-        email = self.cleaned_data.get("email")
-        if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError(_("A user with that email already exists."))
-        return email
+        """This method is used to validate the email field of the signup form."""
+        return signup_form_clean_email(self)
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -80,15 +63,14 @@ class UserRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-    
-    
-    
-class UserUpdateForm(forms.ModelForm): 
+
+
+class UserUpdateForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
     password hash display field.
     """
-    
+
     email = forms.EmailField()
 
     class Meta:
@@ -101,25 +83,12 @@ class UserUpdateForm(forms.ModelForm):
             "country",
             "profile_img",
         ]
-    
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            email_field = User.get_email_field_name()
-            if hasattr(self, "reserved_names"):
-                reserved_names = self.reserved_names
-            else:
-                reserved_names = validators.DEFAULT_RESERVED_NAMES
-            username_validators = [
-                validators.ReservedNameValidator(reserved_names),
-                validators.validate_confusables,
-            ]
+
+    def clean_username(self):
+        return update_form_clean_username(self)
 
     def clean_email(self):
-        email = self.cleaned_data.get("email")
-        qs = User.objects.exclude(pk=self.instance.pk).filter(email__iexact=email)
-        if qs.exists():
-            raise forms.ValidationError(_("Email already exists"))
-        return email
+        return update_form_clean_email(self)
 
     def save(self, commit=True):
         # Save the provided password in hashed format

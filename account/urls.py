@@ -18,10 +18,13 @@ urlpatterns = [
     path("login/", view=user_login_view, name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("signup/", view=user_signup_view, name="signup"),
-    
-    path('activate/<uidb64>/<token>/', ActivateAccountView.as_view(), name='activate'),
-    path('request_activation_email/', RequestActivationEmailView.as_view(), name='request_activation_email'),
-    path('email_sent/', EmailSentView.as_view(), name='email_sent'),
+    path("activate/<uidb64>/<token>/", ActivateAccountView.as_view(), name="activate"),
+    path(
+        "request_activation_email/",
+        RequestActivationEmailView.as_view(),
+        name="request_activation_email",
+    ),
+    path("email_sent/", EmailSentView.as_view(), name="email_sent"),
     path("redirect/", view=user_redirect_view, name="user-redirect"),
     path("update/", view=user_update_view, name="user-update"),
     path("user-detail/<str:username>", view=user_detail_view, name="user-detail"),
@@ -60,7 +63,10 @@ urlpatterns = [
     ),
     path(
         "password-reset/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(success_url = reverse_lazy("account:password-reset-complete"), template_name="djolowin/account/password/password_reset_confirm.html"),
+        auth_views.PasswordResetConfirmView.as_view(
+            success_url=reverse_lazy("account:password-reset-complete"),
+            template_name="djolowin/account/password/password_reset_confirm.html",
+        ),
         name="password-reset-confirm",
     ),
     path(

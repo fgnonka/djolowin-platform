@@ -1,3 +1,5 @@
+""" This module is used to register the models 
+of the account app in the admin interface."""""
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -6,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
 from account.forms import UserRegistrationForm
+from account.models import CustomerEvent
 
 User = get_user_model()
 
@@ -19,6 +22,7 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
+        """ Meta class for UserChangeForm"""
         model = User
         fields = (
             "username",
@@ -32,6 +36,8 @@ class UserChangeForm(forms.ModelForm):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
+    """ The UserAdmin class is used to customize
+    the admin interface for the User model."""
     # The forms to add and change user innces
     form = UserChangeForm
     add_form = UserRegistrationForm
@@ -40,7 +46,7 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = (
-        "username",
+        "uuid",
         "first_name",
         "last_name",
         "email",
@@ -91,6 +97,11 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-# admin.site.register(CustomerEvent)
-# admin.site.register(CustomerNotification)
-# admin.site.register(CustomerCardAlert)
+@admin.register(CustomerEvent)
+class CustomerEventAdmin(admin.ModelAdmin):
+    """ The CustomerEventAdmin class is used to customize
+    the admin interface for the CustomerEvent model."""
+    list_display = ("user", "event_type", "date")
+    list_filter = ("event_type", "date")
+    ordering = ("date",)
+    search_fields = ("user",)

@@ -1,4 +1,5 @@
-{% extends "djolowin/main.html" %} {% block content %}
+{% extends "djolowin/main.html" %} {% block content %} {% load static %}
+
 
 <h1 style="color: #000; font-size: 20px">
 	{{ playercard.player.name }}
@@ -17,8 +18,8 @@
 </h1>
 
 <div class="col">
-	<div class="card border-secondary mb-3" style="width: 18rem">
-		<img src="https://picsum.photos/200/300" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+	<div class="card border-secondary mb-3" style="background-image: url({% static 'card-outline-templates/common-card-template.png' %}); background-repeat: no-repeat; background-size: cover; background-position: center; width: 18rem">
+		<img src="{% static 'images/soccer-rare.jpg' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
 		<div class="card-body">
 			<h4 class="card-title">
 				<a class="player-name" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name }}</a>

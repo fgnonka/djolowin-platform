@@ -1,0 +1,29 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<div class="container mt-5">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Notification Center</h1>
+			{% if notifications %}
+			<div class="list-group mt-4">
+				{% for notification in notifications %}
+				<a href="#" class="list-group-item list-group-item-info">
+					<div class="d-flex w-100 justify-content-between">
+						<h5 class="mb-1">{{ notification.subject }}</h5>
+						<small>{{ notification.date_read|date:"M d, Y h:i A" }}</small>
+					</div>
+					<p class="mb-1">{{ notification.body }}</p>
+            {% if notification.date_read %}
+            <span class="badge badge-secondary">Read</span>
+            {% else %}
+            <span class="badge badge-primary">Unread</span>
+            {% endif %}
+				</a>
+				{% endfor %}
+			</div>
+			{% else %}
+			<p>You have no notifications.</p>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,15 +1,19 @@
 {% extends 'djolowin/main.html' %} {% block content %} {% load humanize %}
 
 
-<h2>Wallet Balance</h2>
-<p>Your current total balance is {{ wallet.balance|floatformat:"0"|intcomma }} DJOBA with {{ wallet.available_balance|floatformat:"0"|intcomma }} DJOBA available to spend.</p>
-<p> {{ wallet.reserved_balance|floatformat:"0"|intcomma }} DJOBA is reserved for pending transactions in Auctions.</p>
-<p>View your transaction history</p>
-<ul>
-	<li><a href="{% url 'transaction:history' %}">History</a></li>
-</ul>
-<p>Go here to recharge your account</p>
-<ul>
-	<li><a href="{% url 'currency:currency_package_list' %}">Recharge</a></li>
-</ul>
+	<h2>Wallet Balance</h2>
+	<p>
+		Your current total balance is {{ wallet.balance|floatformat:"0"|intcomma }} DJOBA with 
+		{{wallet.available_balance|floatformat:"0"|intcomma }} DJOBA available to spend.
+	</p>
+	<p>{{ wallet.reserved_balance|floatformat:"0"|intcomma }} DJOBA is reserved for pending transactions in Auctions.</p>
+	<p>View your transaction history</p>
+	<ul>
+		<li><a href="{% url 'transaction:history' %}">History</a></li>
+	</ul>
+	<p>Go here to recharge your account</p>
+	<ul>
+		<li><a href="{% url 'currency:currency_package_list' %}">Recharge</a></li>
+	</ul>
+
 {% endblock %}

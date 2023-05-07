@@ -1,0 +1,54 @@
+{% load static %}
+
+<div class="card rounded card-template hover14 border-secondary m-3"
+        {% if playercard.rarity.name == 'Common' %}
+        style="background-image: url({% static 'card-outline-templates/common-card-template.jpeg' %});"
+        {% elif playercard.rarity.name == 'Rare' %}
+        style="background-image: url({% static 'card-outline-templates/rare-card-template.jpeg' %});"
+        {% elif playercard.rarity.name == 'Super Rare' %}
+        style="background-image: url({% static 'card-outline-templates/super-rare-card-template.jpeg' %});"
+        {% elif playercard.rarity.name == 'Legendary' %}
+        style="background-image: url({% static 'card-outline-templates/legendary-card-template.jpeg' %});"
+        {% endif %}
+        >
+    <div class="card-header border-0 bg-transparent">
+        <div class="card-container">
+            <h6>
+                <div class="position-absolute top-0 start-0 p-2">
+                    <span class="badge white-text">{{ playercard.index }}/{{ playercard.get_total_card_index }}</span>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <span class="badge white-text">
+                        {{ playercard.player.team.name }}
+                        <br />
+                        {{ playercard.player.team.year }}
+                    </span>
+                </div>
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="badge white-text">#{{playercard.player.jersey_number}}</span>
+                </div>
+            </h6>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if playercard.rarity.name == 'Rare' %}
+        <img src="{% static 'images/my-project.png' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+        {% elif playercard.rarity.name == 'Common' %}
+        <img src="{% static 'images/soccer_figure-removebg.png' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+        {% endif %} 
+        <div class="card-footer border-0 bg-transparent mt-5">
+            <h6 class="card-text mb-4">
+                <a class="player-name text-decoration-none white-text" style="word-wrap: break-word;" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name | upper}}</a>
+            </h6>
+            <span class="badge white-text"
+                >{{playercard.player.get_player_position_verbose}}
+                <br />
+                AGE {{playercard.player.get_player_age}}
+                <br />
+                <span class="badge white-text">{{playercard.rarity.name}}</span>
+            </span>
+        </div>
+
+
+    </div>
+</div>

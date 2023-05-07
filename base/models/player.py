@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
@@ -42,6 +44,16 @@ class Player(models.Model):
             return Player.objects.filter(team=team)
         else:
             return Player.objects.all()
+        
+    @property
+    def get_player_age(self):
+        team_year = self.team.year
+        player_age = team_year - self.date_of_birth.year
+        return player_age
+    
+    @property
+    def get_player_position_verbose(self):
+        return dict(Player.POSITION_CHOICES)[self.position]
 
     def _generate_slug(self):
         value = f"{self.name}-{self.team.country.country.name}"
