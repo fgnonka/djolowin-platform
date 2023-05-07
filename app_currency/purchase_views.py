@@ -98,10 +98,11 @@ def stripe_webhook(request):
             price=session["amount_total"] / 100
         )
         #Record the purchase in your database
-            transaction = create_currency_purchase_transaction(
+            create_currency_purchase_transaction(
             user = session_user, 
             currency_package = currency_package,
             amount_spent = int(session["amount_total"] / 100),
+            currency_amount = currency_package.in_app_currency,
             
         )
 

@@ -1,8 +1,10 @@
-from django.utils import timezone
 from datetime import timedelta
 
 
 from django import forms
+from django.forms.widgets import DateTimeInput
+from django.utils import timezone
+
 from .models import Auction, Bid
 from wallet.models import UserWallet
 
@@ -14,6 +16,7 @@ class AuctionForm(forms.ModelForm):
         widgets = {
             "end_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+        
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,9 +24,9 @@ class AuctionForm(forms.ModelForm):
 
     def clean_end_time(self):
         end_time = self.cleaned_data.get("end_time")
-        if end_time and end_time < timezone.now() + timedelta(hours=6):
+        if end_time and end_time < timezone.now() + timedelta(minutes=5):
             raise forms.ValidationError(
-                "The auction must be active for at least 6 hours."
+                "The auction must be active for at least 5 minutes."
             )
         return end_time
 
@@ -42,3 +45,7 @@ class BidForm(forms.ModelForm):
         auction = self.initial.get("auction")
 
         return cleaned_data
+
+class AuctionSearchForm(forms.Form):
+    card_name = forms.CharField(required=False, label="Card name")
+    min_end_time = forms.DateTimeField(required=False, label="Ending after", widget=DateTimeInput(attrs={'type': 'datetime-local'}))

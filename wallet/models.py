@@ -3,9 +3,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserWallet(models.Model):
-    user = models.OneToOneField('account.CustomUser', on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    reserved_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    user = models.OneToOneField('account.CustomUser', on_delete=models.CASCADE, related_name='wallet')
+    balance = models.PositiveIntegerField(default=0)
+    reserved_balance = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

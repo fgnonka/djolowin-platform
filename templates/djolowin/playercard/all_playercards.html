@@ -10,9 +10,7 @@
 			<div class="col">{{ filter_form.team.label_tag }} {{ filter_form.team }}</div>
 			<div class="col">
 				{{ filter_form.position.label_tag }} {% for position in filter_form.position %}
-				<div class="form-check">
-					{{ position }}
-				</div>
+				<div class="form-check">{{ position }}</div>
 				{% endfor %}
 			</div>
 			<div class="col">
@@ -55,7 +53,38 @@
 						Country: {{ playercard.player.team.name }}
 					</h6>
 					{% if playercard.for_sale and request.user != playercard.owner %}
-					<button type="button" class="btn btn-outline-success">Purchase for {{ playercard.price }} DJOBA</button>
+					<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndPayModal">
+						Purchase for {{ playercard.price }} DJOBA
+					</button>
+					<div
+						class="modal fade"
+						id="reviewAndPayModal"
+						tabindex="-1"
+						aria-labelledby="reviewAndPayModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reviewAndPayModalLabel">Review and Pay</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<h6>Player Card Information</h6>
+									<p>Name: {{ playercard.player.name }}</p>
+									<p>Price: {{ playercard.price }}</p>
+
+									<h6>Your Actual Balance</h6>
+									<p>{{ request.user.get_wallet.balance }}</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+									<a href="{% url 'playercard:purchase-playercard' pk=playercard.pk %}" class="btn btn-primary"
+										>Confirm Purchase</a
+									>
+								</div>
+							</div>
+						</div>
+					</div>
 					{% endif %}
 				</div>
 			</div>
@@ -68,6 +97,4 @@
 	</div>
 	{% endif %}
 </div>
-{% include "djolowin/pagination.html" with page=playercards %}
-
-{% endblock %}
+{% include "djolowin/pagination.html" with search_query=request.GET.search_query|default:'' %} {% endblock %}

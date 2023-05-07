@@ -8,7 +8,7 @@ from account.models import CustomUser
 @staticmethod
 def list_of_cards_to_display(name=None):
     # Get all available cards without an owner and that are not in a bundle
-    available_cards = PlayerCard.objects.filter(owner__isnull=True).exclude(bundle__in=Bundle.objects.all())
+    available_cards = PlayerCard.objects.filter(owner__isnull=True, index__gt=0, for_sale=True).exclude(bundle__in=Bundle.objects.all())
     # available_cards = PlayerCard.objects.filter(Q(owner=None) & Q(index__gt=0))
     if name == "homeview":
         random_display = available_cards.order_by("?")[:8]

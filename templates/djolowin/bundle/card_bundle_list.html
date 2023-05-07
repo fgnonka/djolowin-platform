@@ -1,17 +1,54 @@
 {% extends 'djolowin/main.html' %} {% block content %}
 <h1>Card Bundles</h1>
-<div class="card-bundle-container">
-	{% for bundle in bundles %}
-	<div class="card-bundle">
-		{% if bundle.cover_image %}
-		<img src="{{ bundle.cover_image.url }}" alt="{{ bundle.name }} cover image" />
-		{% endif %}
-		<h2>{{ bundle.name }}</h2>
-		<p>{{ bundle.description }}</p>
-		<p>Price: {{ bundle.price }}</p>
-		<a href="{% url 'bundle:bundle_purchase' bundle.id %}">Purchase Bundle</a>
+
+<form method="get" action="{% url 'bundle:bundles-list' %}">
+	{{ filter_form.as_p}}
+	<input type="submit" class="btn btn-outline-primary" value="Search" />
+	<div class="card-bundle-container">
+		{% for bundle in bundles %}
+		<div class="card-bundle">
+			{% if bundle.cover_image %}
+			<img src="{{ bundle.cover_image.url }}" alt="{{ bundle.name }} cover image" />
+			{% endif %}
+			<h2>{{ bundle.name }}</h2>
+			<p>{{ bundle.description }}</p>
+			<p>Price: {{ bundle.price }}</p>
+		</div>
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndBuyModal">
+			Purchase for {{ bundle.price }} DJOBA
+		</button>
+		<div
+			class="modal fade"
+			id="reviewAndBuyModal"
+			tabindex="-1"
+			aria-labelledby="reviewAndBuyModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="reviewAndBuyModalLabel">Review and Pay</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="col-md-6">
+							<h4>Bundle Details</h4>
+							<p><strong>Name:</strong> {{ bundle.name }}</p>
+							<p><strong>Description:</strong> {{ bundle.description }}</p>
+							<p><strong>Price:</strong> {{ bundle.price }}</p>
+						</div>
+
+						<h6>Your Actual Balance</h6>
+						<p>{{ request.user.get_wallet.balance }}</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<a href="{% url 'bundle:bundle-purchase' bundle.id %}" class="btn btn-primary">Confirm Purchase</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% endfor %}
 	</div>
-	{% endfor %}
-</div>
-{% include 'djolowin/pagination.html' %}
-{% endblock %}
+	{% include 'djolowin/pagination.html' %} {% endblock %}
+</form>

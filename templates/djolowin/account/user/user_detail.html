@@ -4,6 +4,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-sm-12">
+			<img src="{{ user.profile_img.url }}" alt="{{ user.username }} avatar" />
 			<h2>{{ user.username }}</h2>
 			{% if user.get_short_name %}
 			<p>{{ user.get_short_name }}</p>
@@ -32,10 +33,7 @@
 				<b><em>Email Address:</em></b> {{ user.email }}
 			</p>
 			<p>
-				<b><em>Country: </em></b> {{ user.country }}
-			</p>
-			<p>
-				<b><em>Profile Image: </em></b><img src="{{ user.profile_img.url }}" alt="{{ user.username }} avatar" />
+				<b><em>Country: </em></b> {{ user.country.name }}
 			</p>
 			<p>
 				<b><em>Date joined: </em></b> {{ user.date_joined }}

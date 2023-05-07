@@ -16,14 +16,16 @@
 		border-left: none;
 	}
 </style>
-<h1>{{ bundle.name }}</h1>
+{% if bundle.sold_to == request.user %}
+<h1>Below are details of the Bundle you purchased: </h1>
+<h2>{{ bundle.name }}</h2>
 <p>Rarity: {{ bundle.rarity }}</p>
 <p>Description: {{ bundle.description }}</p>
 <p>Price: {{ bundle.price }}</p>
 <p>Date sold: {{ bundle.date_sold }}</p>
-<p>Bought by: {{ bundle.sold_to }}</p>
+<p>Bought by: {{ bundle.sold_to.username }}</p>
 <hr />
-<h2>Cards</h2>
+<h3>Cards</h3>
 <table>
 	<thead>
 		<tr>
@@ -32,6 +34,7 @@
 			<th>Team</th>
 			<th>Jersey Number</th>
 			<th>Image</th>
+			<th>Rarity</th>
 		</tr>
 	</thead>
 	<hr />
@@ -43,9 +46,15 @@
 			<td>{{ card.player.team }}</td>
 			<td>#{{ card.player.jersey_number }}</td>
 			<td><img src="{% static 'images/soccer_figure.png' %}" alt="{{ card.name }}" width="100" height="100" /></td>
+			<td>{{ card.rarity }}</td>
 		</tr>
 		{% endfor %}
 		<!-- add more fields as needed -->
 	</tbody>
 </table>
+{% else %}
+<hr />
+<h1 class='text-warning'> You are not authorized to view this page. </h1>
+<a href="{% url 'base:home' %}">Back to Home</a>
+{% endif %}
 {% endblock %}

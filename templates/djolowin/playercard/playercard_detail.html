@@ -66,8 +66,9 @@
 		</div>
 		{% endif %}
 		{% if request.user == playercard.owner %}
+		{% if not playercard.is_locked %}
 		<button id="modify-price-btn">Modify Card</button>
-		{% if not auction %}
+		{% if not active_auctions %}
 		<a href="{% url 'auction:create_auction' card_pk=playercard.pk %}">Create an Auction for this card</a>
 		{% endif %}
 		<div id="modify-price-form" style="display: none">
@@ -86,5 +87,6 @@
 		modifyPriceForm.style.display = "block";
 	});
 </script>
+{% endif %}
 {% endif %}
 {% endblock content %}

@@ -15,7 +15,7 @@ class Collection(models.Model):
     rarity = models.ForeignKey('playercard.CardRarity', on_delete=models.CASCADE, blank=True, null=True)
     description=models.TextField()
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    cards = models.ManyToManyField('playercard.PlayerCard')
+    cards = models.ManyToManyField('playercard.PlayerCard', related_name='collections')
     reward = models.ForeignKey('reward.DJOBAReward', on_delete=models.CASCADE, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     
@@ -27,3 +27,17 @@ class Collection(models.Model):
     
     def get_cards(self):
         return self.cards.all()
+    
+    
+class CompletedCollection(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    reward = models.ForeignKey('reward.DJOBAReward', on_delete=models.CASCADE, blank=True, null=True)
+    reward_received = models.BooleanField(default=False)
+    date_completed = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.user} - {self.collection}'
+    
+    class Meta:
+        unique_together = ('user', 'collection')

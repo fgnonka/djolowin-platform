@@ -1,4 +1,4 @@
-from .models import Collection
+from .models import Collection, CompletedCollection
 from django.contrib import admin
 
 
@@ -12,3 +12,4 @@ class CollectionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Collection, CollectionAdmin)
+admin.site.register(CompletedCollection)

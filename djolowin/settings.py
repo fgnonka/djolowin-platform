@@ -25,7 +25,7 @@ AUTH_USER_MODEL = "account.CustomUser"
 SECRET_KEY = str(os.environ.get("SECRET_KEY"))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '192.168.1.190']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]", "192.168.1.190"]
 
 
 SITE_ID = 1
@@ -36,11 +36,12 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    'django.contrib.humanize',
+    "django.contrib.humanize",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
     # Third party apps
+    "mixpanel",
     "celery",
     "corsheaders",
     "django_countries",
@@ -51,18 +52,19 @@ INSTALLED_APPS = [
     "graphene_django",
     "phonenumber_field",
     # local apps
-    "account.apps.AccountConfig",
-    "analytics.apps.AnalyticsConfig",
-    "app_currency.apps.AppCurrencyConfig",
-    "auction.apps.AuctionConfig",
-    "base.apps.BaseConfig",
-    "bundle.apps.BundleConfig",
-    "collection.apps.CollectionConfig",
-    "order.apps.OrderConfig",
-    "playercard.apps.PlayercardConfig",
-    "reward.apps.RewardConfig",
-    "transaction.apps.TransactionConfig",
-    "wallet.apps.WalletConfig",
+    "account",
+    "analytics",
+    "app_currency",
+    "auction",
+    "base",
+    "bundle",
+    "collection",
+    "core",
+    "order",
+    "playercard",
+    "reward",
+    "transaction",
+    "wallet",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -225,24 +227,28 @@ PASSWORD_RESET_EMAIL_TEMPLATE = "djolowin/account/password_reset_email.html"
 
 EMAIL_TEMPLATE_NAME = "djolowin/account/password_reset_email.html"
 
-#Stripe settings for payment gateway
+# Stripe settings for payment gateway
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
-STRIPE_WEBHOOK_SECRET = 'whsec_f5d3f7bca1dfdc701d6a19f27ad56d1c965503bd7da1d0784e5c2eddc9195707'
+STRIPE_WEBHOOK_SECRET = (
+    "whsec_f5d3f7bca1dfdc701d6a19f27ad56d1c965503bd7da1d0784e5c2eddc9195707"
+)
 stripe.api_key = STRIPE_SECRET_KEY
 
 # CORS settings
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8080',  # Replace with your Vue.js app's address
+    "http://localhost:8080",  # Replace with your Vue.js app's address
 ]
 
 
-#Celery settings for background tasks
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+# Celery settings for background tasks
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
+

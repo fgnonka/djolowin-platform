@@ -13,7 +13,7 @@ class AuctionAdmin(admin.ModelAdmin):
         "highest_bidder",
         "start_time",
         "end_time",
-        "is_active",
+        "auction_ended",
     )
     list_filter = ("owner", "highest_bidder")
     search_fields = ("card", "owner", "highest_bidder")

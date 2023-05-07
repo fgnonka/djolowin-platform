@@ -99,7 +99,7 @@ class PlayerCard(models.Model):
     @property
     def get_total_card_index(self):
         allcards = PlayerCard.objects.filter(
-            Q(rarity=self.rarity) & Q(player=self.player)
+            Q(rarity=self.rarity) & Q(player=self.player) & ~Q(index=0)
         )
         return allcards.count()
 

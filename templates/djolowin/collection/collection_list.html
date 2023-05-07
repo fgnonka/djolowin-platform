@@ -1,7 +1,17 @@
 {% extends "djolowin/main.html" %} {% block content %} {% load humanize %} {% load static %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <h1>Collections</h1>
 <body>
 	{% for collection, data in collection_progress.items %}
+	{% if data.progress < 100 %}
 	<h2>{{ collection.name }}</h2>
 	<h2>Amount to win: {{ collection.reward.amount|intcomma }} DJOBA</h2>
 	<div class="progress">
@@ -18,7 +28,10 @@
 	<h3>Owned Cards</h3>
 	<ul>
 		{% for card in data.user_cards %}
-		<li>{{ card.player.name }}</li>
+		<li>
+            {{ card.player.name }} - {{ card.rarity  }} - {{ card.index }}
+            {% comment %} Owned: {{ card_quantities|get_key:card.key }} {% endcomment %}
+        </li>
 		{% endfor %}
 	</ul>
 	<h3>Missing Cards</h3>
@@ -27,6 +40,7 @@
 		<li>{{ card.player.name }}</li>
 		{% endfor %}
 	</ul>
+	{% endif %}
 	{% endfor %}
 </body>
 {% endblock %}

@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,8 +20,9 @@ from playercard.signals import playercard_viewed
 from transaction.utils import create_card_purchase_transaction
 from wallet.models import UserWallet
 
-from .forms import CardForm, PlayerCardFilterForm
+from .forms import CardForm, PlayerCardSearchForm
 from .filters import PlayerCardFilter
+from .signals import completed_card_purchase
 
 
 class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
@@ -30,6 +32,9 @@ class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
 
     def post(self, request, pk):
         playercard = get_object_or_404(PlayerCard, pk=pk, owner=request.user)
+        if playercard.is_locked:
+            messages.error(request, "This card is locked and cannot be Updated.")
+            return redirect("playercard:playercard-detail", pk=playercard.pk)
         form = CardForm(request.POST)
         if form.is_valid():
             playercard.price = form.cleaned_data["price"]
@@ -54,7 +59,11 @@ class PlayerCardDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = CardForm(playercard_instance=self.object)
-        context["auction"] = Auction.objects.filter(card=self.object)
+        context["active_auctions"] = Auction.objects.filter(
+            Q(card=self.object)
+            & Q(end_time__gte=timezone.now())
+            & Q(owner=self.object.owner)
+        )
         return context
 
 
@@ -65,36 +74,36 @@ class PlayerCardListView(ListView):
     template_name = "djolowin/playercard/all_playercards.html"
     context_object_name = "playercards"
     paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
-    filterset_class = PlayerCardFilter
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        filter_data = self.request.GET.copy()
-        filter_form = PlayerCardFilterForm(filter_data)
-        context["filter_form"] = filter_form
-        context["filter_params"] = filter_data.urlencode()
-
-        return context
 
     def get_queryset(self):
         # The method below is to only show playercards that are for sale and that are not from the MasterTeam COllection
         queryset = list_of_cards_to_display()
-        filter_form = PlayerCardFilterForm(self.request.GET or None)
+        search_query = self.request.GET.get("search_query", '')
+        filter_form = PlayerCardSearchForm(self.request.GET)
         if filter_form.is_valid():
             query = Q()
             if filter_form.cleaned_data.get("name"):
                 query &= Q(player__name__icontains=filter_form.cleaned_data["name"])
             if filter_form.cleaned_data.get("team"):
-                query &= Q(player__team__slug__exact=filter_form.cleaned_data["team"])
+                query &= Q(player__team__in=filter_form.cleaned_data.get("team"))
             if filter_form.cleaned_data.get("position"):
                 query &= Q(
-                    player__position__icontains=filter_form.cleaned_data["position"]
+                    player__position__in=filter_form.cleaned_data["position"]
                 )
             if filter_form.cleaned_data.get("rarity"):
                 query &= Q(rarity__name__icontains=filter_form.cleaned_data["rarity"])
             queryset = queryset.filter(query)
+            if search_query:
+                queryset = queryset.filter(Q(player__name__icontains=search_query))
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filter_form = PlayerCardSearchForm(self.request.GET)
+        context["filter_form"] = filter_form
+
+        return context
 
 class UserPlayerCardListView(ListView):
     model = PlayerCard
@@ -144,7 +153,8 @@ def playercards_by_team_list(request, slug):
 @login_required
 def purchase_playercard(request, pk):
     playercard = get_object_or_404(PlayerCard, pk=pk)
-    user_wallet = UserWallet.objects.get(user=request.user)
+    user = request.user
+    user_wallet = UserWallet.objects.get(user=user)
 
     if user_wallet.balance >= playercard.price:
         user_wallet.balance -= playercard.price
@@ -161,6 +171,7 @@ def purchase_playercard(request, pk):
                 user_wallet.balance
             ),
         )
+
     else:
         messages.error(request, "Insufficient balance to purchase the player card.")
 

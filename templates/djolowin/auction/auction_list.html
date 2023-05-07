@@ -2,6 +2,11 @@
 
 <h1>Active Auctions</h1>
 
+<h2>Search Auctions</h2>
+<form method="get">
+	{{ form.as_p }}
+	<button type="submit">Search</button>
+</form>
 <div class="auction-list">
 	{% for auction in auctions %}
 	<div class="auction-item">
@@ -12,7 +17,7 @@
 		<p>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</p>
 		<p>Time Remaining: {{ auction.time_remaining }}</p>
 		<a href="{% url 'auction:auction_detail' auction.id %}">
-			<h5>Bid on this auction</h5>
+			<h5>View this auction</h5>
 		</a>
 	</div>
 	{% empty %}

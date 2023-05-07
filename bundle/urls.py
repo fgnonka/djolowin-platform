@@ -1,15 +1,15 @@
 from django.urls import path
-from bundle.views import PurchaseBundleView, BundleListView, BundleDetailView
+from bundle.views import purchase_bundle, BundleListView, BundleDetailView
 
 app_name = "bundle"
 
 urlpatterns = [
     # ... other URL patterns ...
-    path("all/", BundleListView.as_view(), name="bundles_list"),
+    path("all/", BundleListView.as_view(), name="bundles-list"),
     path(
         "purchase/<int:bundle_id>/",
-        PurchaseBundleView.as_view(),
-        name="bundle_purchase",
+        purchase_bundle,
+        name="bundle-purchase",
     ),
     path(
         "bundle/<int:pk>/",

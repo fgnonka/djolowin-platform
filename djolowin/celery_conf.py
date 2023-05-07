@@ -17,8 +17,12 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
 app.conf.beat_schedule = {
-    'check-auction-end-every-5-minutes': {
-        'task': 'auction.tasks.check_auction_end',
-        'schedule': timedelta(minutes=3),
+    "check_auction_end": {
+        "task": "auction.tasks.check_auction_end",
+        "schedule": timedelta(minutes=1),
+    },
+    "check_auction_endings": {
+        "task": "auction.tasks.check_auction_ending_soon",
+        "schedule": timedelta(minutes=30),
     },
 }
