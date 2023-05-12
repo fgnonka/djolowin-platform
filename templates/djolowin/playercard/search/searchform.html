@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="mb-3">
+    <form action="#" method="get" class="">
+        <div class="form-group mr-2">
+            <label for="rarity-filter">Filter by Rarity:</label>
+            <select id="rarity-filter" name="rarity" class="form-control">
+              <option value="">All Rarities</option>
+              <option value="Common" {% if request.GET.rarity == 'common' %}selected{% endif %}>Common</option>
+              <option value="Rare" {% if request.GET.rarity == 'rare' %}selected{% endif %}>Rare</option>
+              <option value="Epic" {% if request.GET.rarity == 'epic' %}selected{% endif %}>Epic</option>
+              <option value="Legendary" {% if request.GET.rarity == 'legendary' %}selected{% endif %}>Legendary</option>
+            </select>
+        </div>
+        {% if request.GET.rarity %}
+            <a href="?">
+                <button type="button" class="btn btn-secondary">Clear Filters</button>
+            </a>
+        {% endif %}
+    </form>
+</div>
+<script src="{% static 'js/search.js' %}"></script>

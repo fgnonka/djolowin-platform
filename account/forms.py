@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext_lazy as _
 
-from .cleaning_functions import (
+from .validation_functions import (
     signup_form_clean_email,
     signup_form_clean_username,
     update_form_clean_email,

@@ -48,7 +48,7 @@ class BidFormMixin(SingleObjectMixin):
                         [previous_bidder.email],
                         fail_silently=False,
                     )
-                return redirect(reverse("auction:auction_detail", args=[auction.pk]))
+                return redirect(reverse("auction:active_auctions", ))
             else:
                 messages.info(
                     request,
@@ -56,6 +56,6 @@ class BidFormMixin(SingleObjectMixin):
                     It could be that you do not have enough funds in your wallet, 
                     or that the amount is lower than the current bid.""",
                 )
-                return redirect(reverse("auction:auction_detail", args=[auction.pk]))
+                return redirect(reverse("auction:active_auctions", ))
 
         return self.render_to_response(self.get_context_data(bid_form=form))

@@ -21,5 +21,4 @@ urlpatterns = [
         PlayerDetailView.as_view(),
         name="player-detail",
     ),
-    re_path(r'^search/$', search, name='search')
 ]

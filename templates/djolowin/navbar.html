@@ -28,7 +28,7 @@
 					<i class="fa fa-user"></i>{{request.user.username}}</a>
 				{% endif %}
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="{% url 'account:user-detail' username=request.user.username %}">My Profile Information</a>
+					<a class="dropdown-item" href="{% url 'account:user-detail' uuid=request.user.uuid %}">My Profile Information</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="#">My Squad</a>
 					<div class="dropdown-divider"></div>

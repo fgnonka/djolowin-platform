@@ -13,18 +13,61 @@ from phonenumbers.phonenumberutil import is_possible_number
 from .error_codes import AccountErrorCode
 
 
-CONFUSABLE = _("This name cannot be registered. " "Please choose a different name.")
+
+
+def validate_confusables(value):
+    """
+    Validator which disallows 'dangerous' usernames likely to
+    represent homograph attacks.
+    A username is 'dangerous' if it is mixed-script (as defined by
+    Unicode 'Script' property) and contains one or more characters
+    appearing in the Unicode Visually Confusable Characters file.
+    """
+    if not isinstance(value, str):
+        return
+    if confusables.is_dangerous(value):
+        raise ValidationError(CONFUSABLE, code="invalid")
+
+
+def validate_possible_number(phone, country=None):
+    phone_number = to_python(phone, country)
+    if (
+        phone_number
+        and not is_possible_number(phone_number)
+        or not phone_number.is_valid()
+    ):
+        raise ValidationError(
+            "The phone number entered is not valid.", code=AccountErrorCode.INVALID
+        )
+    return phone_number
+
+
+def validate_confusables_email(value):
+    """
+    Validator which disallows 'dangerous' email addresses likely to
+    represent homograph attacks.
+    An email address is 'dangerous' if either the local-part or the
+    domain, considered on their own, are mixed-script and contain one
+    or more characters appearing in the Unicode Visually Confusable
+    Characters file.
+    """
+    if value.count("@") != 1:
+        return
+    local_part, domain = value.split("@")
+    if confusables.is_dangerous(local_part) or confusables.is_dangerous(domain):
+        raise ValidationError(CONFUSABLE_EMAIL, code="invalid")
+
+
+CONFUSABLE = _("This name cannot be registered. Please choose a different name.")
 CONFUSABLE_EMAIL = _(
-    "This email address cannot be registered. "
-    "Please supply a different email address."
+    "This email address cannot be registered. Please supply a different email address."
 )
 DUPLICATE_EMAIL = _(
-    "This email address is already in use. " "Please supply a different email address."
+    "This email address is already in use. Please supply a different email address."
 )
 DUPLICATE_USERNAME = _("A user with that username already exists.")
 FREE_EMAIL = _(
-    "Registration using free email addresses is prohibited. "
-    "Please supply a different email address."
+    "Registration using free email addresses is prohibited. Please supply a different email address."
 )
 RESERVED_NAME = _("This name is reserved and cannot be registered.")
 TOS_REQUIRED = _("You must agree to the terms to register")
@@ -524,46 +567,3 @@ DEFAULT_RESERVED_NAMES = (
     + SENSITIVE_FILENAMES
     + OTHER_SENSITIVE_NAMES
 )
-
-
-def validate_confusables(value):
-    """
-    Validator which disallows 'dangerous' usernames likely to
-    represent homograph attacks.
-    A username is 'dangerous' if it is mixed-script (as defined by
-    Unicode 'Script' property) and contains one or more characters
-    appearing in the Unicode Visually Confusable Characters file.
-    """
-    if not isinstance(value, str):
-        return
-    if confusables.is_dangerous(value):
-        raise ValidationError(CONFUSABLE, code="invalid")
-
-
-def validate_possible_number(phone, country=None):
-    phone_number = to_python(phone, country)
-    if (
-        phone_number
-        and not is_possible_number(phone_number)
-        or not phone_number.is_valid()
-    ):
-        raise ValidationError(
-            "The phone number entered is not valid.", code=AccountErrorCode.INVALID
-        )
-    return phone_number
-
-
-def validate_confusables_email(value):
-    """
-    Validator which disallows 'dangerous' email addresses likely to
-    represent homograph attacks.
-    An email address is 'dangerous' if either the local-part or the
-    domain, considered on their own, are mixed-script and contain one
-    or more characters appearing in the Unicode Visually Confusable
-    Characters file.
-    """
-    if value.count("@") != 1:
-        return
-    local_part, domain = value.split("@")
-    if confusables.is_dangerous(local_part) or confusables.is_dangerous(domain):
-        raise ValidationError(CONFUSABLE_EMAIL, code="invalid")

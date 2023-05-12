@@ -205,7 +205,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def get_absolute_url(self):
         """ Return the URL to the user detail page."""
-        return reverse("account:user-detail", kwargs={"username": self.username})
+        return reverse("account:user-detail", kwargs={"uuid": self.uuid})
 
 
 class CustomerEvent(models.Model):

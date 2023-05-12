@@ -57,8 +57,8 @@ def update_form_clean_username(self):
     username = self.cleaned_data.get("username")
     check_username_length(username)
     check_username_in_reserved_names(username)
-    queryset = User.objects.exclude(pk=self.instance.pk).filter(
-        username__iexact=username
+    queryset = User.objects.filter(username__iexact=username).exclude(
+        pk=self.instance.pk
     )
     if queryset.exists():
         raise forms.ValidationError(_("Username already exists"))
@@ -69,7 +69,7 @@ def update_form_clean_username(self):
 def update_form_clean_email(self):
     """This method is used to validate the email field of a form."""
     email = self.cleaned_data.get("email")
-    queryset = User.objects.exclude(pk=self.instance.pk).filter(email__iexact=email)
+    queryset = User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
     if queryset.exists():
         raise forms.ValidationError(_("Email already exists"))
     validate_confusables_email(email)

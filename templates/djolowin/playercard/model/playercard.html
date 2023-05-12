@@ -41,14 +41,12 @@
                 <a class="player-name text-decoration-none white-text" style="word-wrap: break-word;" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name | upper}}</a>
             </h6>
             <span class="badge white-text"
-                >{{playercard.player.get_player_position_verbose}}
-                <br />
-                AGE {{playercard.player.get_player_age}}
+            >{{playercard.player.get_player_position_verbose}}
+            <br />
+            AGE {{playercard.player.get_player_age}}
                 <br />
                 <span class="badge white-text">{{playercard.rarity.name}}</span>
             </span>
         </div>
-
-
     </div>
 </div>

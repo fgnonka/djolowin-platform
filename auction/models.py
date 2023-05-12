@@ -53,7 +53,7 @@ class Auction(models.Model):
         now = timezone.now()
         return self.end_time - now < timezone.timedelta(hours=1)
     
-
+    
     def is_active(self):
         now = timezone.now()
         return self.start_time <= now and self.end_time >= now

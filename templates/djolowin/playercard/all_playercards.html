@@ -3,28 +3,7 @@
 	<h1>Player Card Search</h1>
 	<br />
 	{% if user.is_authenticated %}
-	<form method="get" class="mb-3" value="{{ request.GET.search }}">
-        <div class="row">
-            <div class="col">
-                <input type="text" class="form-control" name="search"  placeholder="Search by player name">
-            </div>
-            <div class="col">
-                <select name="sort_by" class="form-select">
-                    <option value="player__name" {% if request.GET.sort_by == "player__name" %}selected{% endif %}>Player Name</option>
-                    <option value="rarity__name" {% if request.GET.sort_by == "rarity__name" %}selected{% endif %}>Rarity</option>
-                </select>
-            </div>
-            <div class="col">
-                <select name="order" class="form-select">
-                    <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
-                    <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>Descending</option>
-                </select>
-            </div>
-            <div class="col">
-                <button type="submit" class="btn search-btn">Filter & Sort</button>
-            </div>
-        </div>
-    </form>
+    {% include "djolowin/playercard/search/searchform.html" %}
 	{% endif %}
 	<br />
 	{% if playercards %}
@@ -33,10 +12,7 @@
 		<div class="col-md-4 col-lg-3 mb-4">
 			{% include "djolowin/playercard/model/playercard.html" %}
             <div class="card-footer m-1">
-                <span class="badge badge-default rounded-pill text-dark" style="badge-color:info;">Purchase for {{ playercard.price }} DJOBA</span>
-            {% comment %} <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndPayModal">
-                Purchase for {{ playercard.price }} DJOBA
-            </button> {% endcomment %}
+                <span class="badge badge-default rounded-pill text-dark" >Purchase for {{ playercard.price }} DJOBA</span>
             </div>
 		</div>
 		{% empty %}
@@ -46,5 +22,8 @@
 		{% endfor %}
 	</div>
 	{% endif %}
-	{% include "djolowin/pagination.html"  %} {% endblock %}
+	{% include "djolowin/pagination.html"  %} 
+    {% block scripts %}
+{% endblock %}
+    {% endblock %}
 </div>

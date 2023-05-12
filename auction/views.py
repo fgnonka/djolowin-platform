@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -19,6 +20,7 @@ class ActiveAuctionListView(LoginRequiredMixin, ListView):
     model = Auction
     template_name = "djolowin/auction/auction_list.html"
     context_object_name = "auctions"
+    paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
 
     def get_queryset(self):
         now = timezone.now()
@@ -26,6 +28,9 @@ class ActiveAuctionListView(LoginRequiredMixin, ListView):
             Q(start_time__lte=now) & Q(end_time__gte=now)
         )
         form = AuctionSearchForm(self.request.GET)
+        rarity = self.request.GET.get("rarity")
+        if rarity:
+            active_auctions = active_auctions.filter(card__rarity__name=rarity)
         if form.is_valid():
             card_name = form.cleaned_data.get("card_name")
             min_end_time = form.cleaned_data.get("min_end_time")
@@ -40,6 +45,7 @@ class ActiveAuctionListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["bid_form"] = BidForm()
         context["form"] = AuctionSearchForm(self.request.GET)
         return context
 
@@ -93,8 +99,8 @@ class AuctionDetailView(LoginRequiredMixin, DetailView, BidFormMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["bid_form"] = BidForm()
         context["auction"] = Auction.objects.get(pk=self.kwargs["pk"])
+        context["bid_form"] = BidForm()
 
         return context
 

@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 
-from .signals import completed_auction
+
 
 def handle_auction_end(auction):
     """This function is called when an auction ends.
@@ -45,7 +45,7 @@ def send_auction_ended_email(auction):
         auction: The auction that has ended.
     """
     highest_bid = auction.bid_set.order_by("-amount").first()
-    for user in auction.watchers.all():
+    for user in auction.watchers.all().exclude(id=auction.owner.id):
         send_mail(
             "Auction Ended",
             f"The auction for {auction.card} has ended.",

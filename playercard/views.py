@@ -25,6 +25,7 @@ from .forms import CardForm, PlayerCardSearchForm
 from .signals import completed_card_purchase
 
 
+
 class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
     model = PlayerCard
     form_class = CardForm
@@ -58,6 +59,11 @@ class PlayerCardDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        past_auctions = Auction.objects.filter(
+            Q(card=self.object)
+            & Q(end_time__lte=timezone.now()))[:5]
+        context["past_auctions"] = past_auctions
+        context["past_auctions_count"] = past_auctions.count()
         context["form"] = CardForm(playercard_instance=self.object)
         context["active_auctions"] = Auction.objects.filter(
             Q(card=self.object)
@@ -67,7 +73,7 @@ class PlayerCardDetailView(DetailView):
         return context
 
 
-class PlayerCardListView(ListView):
+class PlayerCardListView(ListView, ):
     """Alternative Playercard Listview"""
 
     model = PlayerCard
@@ -83,9 +89,9 @@ class PlayerCardListView(ListView):
         search = self.request.GET.get("search")
         rarity = self.request.GET.get("rarity")
         team = self.request.GET.get("team")
-        position = self.request.GET.get("position"  )
+        position = self.request.GET.get("position")
         print(search, rarity, team, position)
-        
+
         query = Q()
         if search:
             query &= Q(player__name__icontains=search)
@@ -95,7 +101,7 @@ class PlayerCardListView(ListView):
             query &= Q(player__team__id=team)
         if position:
             query &= Q(player__position=position)
-            
+
         sort_by = self.request.GET.get("sort_by")
         order = self.request.GET.get("order")
         queryset = queryset.filter(query)
@@ -104,8 +110,10 @@ class PlayerCardListView(ListView):
             if order == "desc":
                 sort_by = f"-{sort_by}"
             queryset = queryset.filter(query).order_by(sort_by)
+        if rarity:
+            queryset = queryset.filter(rarity__name=rarity)
         return queryset
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["rarity_choices"] = self.RARITY_CHOICES
@@ -123,6 +131,7 @@ class UserPlayerCardListView(ListView):
         user = self.request.user
         queryset = self.model.objects.filter(owner=user)
 
+        rarity = self.request.GET.get("rarity")
         search = self.request.GET.get("search")
         if search:
             queryset = queryset.filter(player__name__icontains=search)
@@ -134,8 +143,12 @@ class UserPlayerCardListView(ListView):
             if order == "desc":
                 sort_by = f"-{sort_by}"
             queryset = queryset.order_by(sort_by)
-
+        if rarity:
+            queryset = queryset.filter(rarity__name=rarity)
+            
         return queryset
+
+        
 
 
 def playercards_by_team_list(request, slug):

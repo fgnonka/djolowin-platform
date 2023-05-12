@@ -4,6 +4,9 @@
 <h1>My Cards</h1>
 
 <div class="container ">
+    <div id="searchbox">
+    {% include "djolowin/playercard/search/searchform.html" %}
+
     <form method="get" class="mb-3">
         <div class="row">
             <div class="col">
@@ -26,6 +29,7 @@
             </div>
         </div>
     </form>
+    </div>
 	{% if playercards %}
     <div class="row ">
         {% for playercard in playercards %}
@@ -40,6 +44,8 @@
     </div>
 	{% endif %}
     {% include "djolowin/pagination.html" with page=page_obj %}
+    {% block scripts %}
+{% endblock %}
 </div>
 
 {% endblock %}

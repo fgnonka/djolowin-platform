@@ -1,28 +1,37 @@
 {% extends "djolowin/main.html" %} {% block content %}
+<main>
+	<div clas="container">
+		<h1>Active Auctions</h1>
 
-<h1>Active Auctions</h1>
-
-<h2>Search Auctions</h2>
-<form method="get">
-	{{ form.as_p }}
-	<button type="submit">Search</button>
-</form>
-<div class="auction-list">
-	{% for auction in auctions %}
-	<div class="auction-item">
-		<h2>{{ auction.card.player.name }} - {{ auction.card.player.team.name }}</h2>
-		<h5>Auction Owner: {{ auction.owner.username }}</h5>
-		<p>Position: {{ auction.card.player.position }}</p>
-		<p>Rarity: {{ auction.card.rarity }}</p>
-		<p>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</p>
-		<p>Time Remaining: {{ auction.time_remaining }}</p>
-		<a href="{% url 'auction:auction_detail' auction.id %}">
-			<h5>View this auction</h5>
-		</a>
+		<h2>Search Auctions</h2>
+		<div class="form-container mt-0 mb-4">
+			{% include "djolowin/playercard/search/searchform.html" %}
+		<form method="get">
+			{{ form.as_p }}
+			<button class="btn search-btn" type="submit">Search</button>
+		</form>
+		</div>
+		<div class="row">
+			{% for auction in auctions %}
+			<div class="col-md-4 col-lg-3 mb-4">
+				<h5 class="white-text">Owner: {{ auction.owner.username }}</h5>
+				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %}
+				{% if auction.get_highest_bid.amount %}
+				<h4>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
+				{% else %}
+				<h4>Starting Price: {{ auction.starting_price }} DJOBA</h4>
+				{% endif %}
+				<h4>Expires on: {{ auction.end_time }}</h4>
+				<a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
+					<h5 class="accentext">View this auction</h5>
+				</a>
+			</div>
+			{% empty %}
+			<div class="col-12">
+				<p>No Active auctions found at the moment. Please come back again later</p>
+			</div>
+		</div>
+		{% endfor %} {% include "djolowin/pagination.html" %}
 	</div>
-	{% empty %}
-	<p>No active auctions at the moment.</p>
-	{% endfor %}
-</div>
-
+</main>
 {% endblock %}

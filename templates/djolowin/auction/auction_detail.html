@@ -1,5 +1,6 @@
 {% extends "djolowin/main.html" %} {% block content %}
-<h1>{{ auction.card }}</h1>
+{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %}
+
 <p>Starting price: {{ auction.starting_price }}</p>
 <p>End time: {{ auction.end_time }}</p>
 <p>Highest bidder: {{ auction.highest_bidder.username }}</p>
@@ -14,7 +15,7 @@
 <h2>Bid on this auction</h2>
 <form method="post" action="{% url 'auction:auction_detail' auction.pk %}">
 	{% csrf_token %} {{ bid_form.as_p }}
-	<button type="submit">Place Bid</button>
+	<button class="btn search-btn" type="submit">Place Bid</button>
 </form>
 
 {% endif %} {% endif %}

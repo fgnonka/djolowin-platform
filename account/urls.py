@@ -27,7 +27,7 @@ urlpatterns = [
     path("email_sent/", EmailSentView.as_view(), name="email_sent"),
     path("redirect/", view=user_redirect_view, name="user-redirect"),
     path("update/", view=user_update_view, name="user-update"),
-    path("user-detail/<str:username>", view=user_detail_view, name="user-detail"),
+    path("user-detail/<uuid:uuid>/", view=user_detail_view, name="user-detail"),
     # Password change urls
     path(
         "password-change/",

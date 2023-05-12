@@ -48,7 +48,7 @@
 }
 
 .wrapper {
-	max-width: 1164px;
+	max-width: 1200px;
 	margin: auto;
 }
 .gradient-custom {
@@ -78,11 +78,45 @@
 	color: #81ffd9;
 }
 
+.accentext {
+	color: #81ffd9;
+}
+
+.accentext:hover {
+	color: #ffffff;
+}
+
 p {
 	color: #ffffff;
 }
 
-footer {
-	bottom: 0;
-	width: 100%;
+.flex-container {
+	display: flex;
+	justify-content: flex;
+}
+
+.flex-child {
+	flex: 1;
+}
+
+.detail-group {
+	border-radius: 15px;
+	color: #ffffff;
+	background-color: #181a1a;
+}
+
+.detail-line {
+	color: #ffffff;
+	background-color: #131414;
+}
+
+@media (max-width: 768px) {
+	.flex-container {
+		flex-direction: column;
+	}
+
+	.flex-child {	
+		flex: none;
+		width: 100%;
+	}
 }

@@ -1,6 +1,6 @@
 from django import forms
 
-from .filters import PlayerCardFilter
+
 from .models import CardRarity, PlayerCard
 from base.models import Team, Player
 
@@ -27,6 +27,23 @@ class CardForm(forms.ModelForm):
 RARITY_CHOICES = [(rarity.name, rarity.name) for rarity in CardRarity.objects.all()]
 TEAM_CHOICES = [(int(team.id), team) for team in Team.objects.all()]
 POSITION_CHOICES = [(position) for position in Player.POSITION_CHOICES]
+
+
+RARITY_CHOICES = (
+    ('common', 'Common'),
+    ('rare', 'Rare'),
+    ('super_rare', 'Super Rare'),
+    ('legendary', 'Legendary'),
+    ('unique', 'Unique'),
+)
+
+
+class CardFilterForm(forms.Form):
+    common = forms.BooleanField(required=False)
+    rare = forms.BooleanField(required=False)
+    super_rare = forms.BooleanField(required=False)
+    legendary = forms.BooleanField(required=False)
+    unique = forms.BooleanField(required=False)
 
 
 class PlayerCardSearchForm(forms.Form):
