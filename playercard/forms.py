@@ -31,9 +31,9 @@ POSITION_CHOICES = [(position) for position in Player.POSITION_CHOICES]
 
 RARITY_CHOICES = (
     ('common', 'Common'),
+    ('limited', 'Limited'),
     ('rare', 'Rare'),
     ('super_rare', 'Super Rare'),
-    ('legendary', 'Legendary'),
     ('unique', 'Unique'),
 )
 

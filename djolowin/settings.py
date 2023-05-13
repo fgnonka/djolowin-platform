@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     # Third party apps
-    "mixpanel",
     "celery",
     "corsheaders",
     "django_countries",

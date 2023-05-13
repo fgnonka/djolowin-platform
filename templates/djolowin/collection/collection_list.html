@@ -37,7 +37,7 @@
 	<h3>Missing Cards</h3>
 	<ul>
 		{% for card in data.missing_cards %}
-		<li>{{ card.player.name }}</li>
+		<li><p>{{ card.player.name }}<p></li>
 		{% endfor %}
 	</ul>
 	{% endif %}

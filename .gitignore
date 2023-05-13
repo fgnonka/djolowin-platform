@@ -24,6 +24,7 @@ djolowin-env/
 
 # IDE-specific files (e.g. for Visual Studio Code)
 .vscode/
+.vs
 
 # Package manager files
 node_modules/

@@ -29,12 +29,11 @@ def random_image():
 
 
 def create_playercards():
-    # Create 101 instances for each player
     for player in players:
-        for i in range(101):
+        for i in range(250):
             owner = None
             common_rarity = CardRarity.objects.get(name="Common")
-            common_price = random.randint(1000, 2500)
+            common_price = random.randint(0, 100)
             playercard_common = PlayerCard(
                 for_sale=True,
                 is_public=True,
@@ -48,6 +47,25 @@ def create_playercards():
             )
             playercard_common.save()
             print(f"PlayerCard {playercard_common.slug} created successfully!")
+        
+        for i in range(101):
+            owner = None
+            limited_rarity = CardRarity.objects.get(name="Limited")
+            limited_price = random.randint(1000, 2500)
+            playercard_limited = PlayerCard(
+                for_sale=True,
+                is_public=True,
+                owner=owner,
+                player=player,
+                rarity=limited_rarity,
+                price=limited_price,
+                index=i,
+                slug=slugify(f"{player.name}-{limited_rarity}-{i}"),
+                number_likes=random.randint(0, 100),
+            )
+            playercard_limited.save()
+            print(f"PlayerCard {playercard_limited.slug} created successfully!")
+            
         for i in range(51):
             owner = None
             rare_rarity = CardRarity.objects.get(name="Rare")
@@ -65,6 +83,42 @@ def create_playercards():
             )
             playercard_rare.save()
             print(f"PlayerCard {playercard_rare.slug} created successfully!")
+            
+        for i in range(11):
+            owner = None
+            super_rare_rarity = CardRarity.objects.get(name="Super Rare")
+            super_rare_price = random.randint(5000, 10000)
+            playercard_super_rare = PlayerCard(
+                for_sale=True,
+                is_public=True,
+                owner=owner,
+                player=player,
+                rarity=super_rare_rarity,
+                price=super_rare_price,
+                index=i,
+                slug=slugify(f"{player.name}-{super_rare_rarity}-{i}"),
+                number_likes=random.randint(0, 100),
+            )
+            playercard_super_rare.save()
+            print(f"PlayerCard {playercard_super_rare.slug} created successfully!")
+        
+        for i in range(2):
+            owner = None
+            unique_rarity = CardRarity.objects.get(name="Unique")
+            unique_price = 100000
+            playercard_unique = PlayerCard(
+                for_sale=True,
+                is_public=True,
+                owner=owner,
+                player=player,
+                rarity=unique_rarity,
+                price=unique_price,
+                index=i,
+                slug=slugify(f"{player.name}-{unique_rarity}-{i}"),
+                number_likes=random.randint(0, 100),
+            )
+            playercard_unique.save()
+            print(f"PlayerCard {playercard_unique.slug} created successfully!")
 
 if __name__ == "__main__":
     create_playercards()

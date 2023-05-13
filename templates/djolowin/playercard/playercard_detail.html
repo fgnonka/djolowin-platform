@@ -95,6 +95,7 @@
 					</div>
 					<div class="d-flex">
 						<div class="p-2 flex-grow-1">
+							{% comment %} change the is_public to "Hide my card" {% endcomment %}
 							{% if request.user == playercard.owner %} {% if not playercard.is_locked %}
 							<button id="modify-price-btn" class="btn search-btn">Modify Card</button>
 						</div>

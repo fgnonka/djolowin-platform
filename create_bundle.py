@@ -13,36 +13,36 @@ from bundle.models import Bundle
 
 def create_bundles():
     # Get all card rarities
-    rarities = CardRarity.objects.all()
-
+    # rarities = CardRarity.objects.all().exclude(name="Unique" or "Super Rare" or "Common")
+    rarity = CardRarity.objects.get(name="Limited")
     # Loop through rarities and create bundles for each rarity
-    for rarity in rarities:
-        # Get all available cards of the current rarity without an owner
-        available_cards = PlayerCard.objects.filter(Q(rarity=rarity)& Q(owner=None) & Q(index__gt=30))
-        bundle_index = 1
-        bundle_size = 10
-        # While there are enough cards for a bundle
-        while available_cards.count() >= bundle_size:
-            card_bundle = Bundle(
-                rarity=rarity,
-                name=f"{rarity.name} Bundle {bundle_index}",
-                price=25000,
+    # for rarity in rarities:
+    # Get all available cards of the current rarity without an owner
+    available_cards = PlayerCard.objects.filter(Q(rarity=rarity) & Q(owner=None) & Q(index__gt=60))
+    bundle_index = 1
+    bundle_size = 10
+    # While there are enough cards for a bundle
+    while available_cards.count() >= bundle_size:
+        card_bundle = Bundle(
+            rarity=rarity,
+            name=f"{rarity.name} Bundle {bundle_index}",
+            price=15000,
+        )
+        # Randomly select cards from the available_cards queryset
+        selected_cards = random.sample(list(available_cards), bundle_size)
+        # bundle_price = sum(card.price for card in selected_cards)
+
+        card_bundle.save()  # Save the instance to generate the ID
+        bundle_index += 1
+
+        for card in selected_cards:
+            Bundle.cards.through.objects.create(
+                card_bundle=card_bundle, player_card=card
             )
-            # Randomly select cards from the available_cards queryset
-            selected_cards = random.sample(list(available_cards), bundle_size)
-            # bundle_price = sum(card.price for card in selected_cards)
 
-            card_bundle.save()  # Save the instance to generate the ID
-            bundle_index += 1
-
-            for card in selected_cards:
-                Bundle.cards.through.objects.create(
-                    card_bundle=card_bundle, player_card=card
-                )
-
-                print(f"Card {card.slug} added to bundle {card_bundle.name}")
-            # Update the amount of available cards
-            available_cards = PlayerCard.objects.filter(Q(rarity=rarity) & Q(index__gt=30) & Q(owner=None) & ~Q(bundle__isnull=False))
+            print(f"Card {card.slug} added to bundle {card_bundle.name}")
+        # Update the amount of available cards
+        available_cards = PlayerCard.objects.filter(Q(rarity=rarity) & Q(index__gt=60) & Q(owner=None) & ~Q(bundle__isnull=False))
     print("Card bundles created.")
 
 

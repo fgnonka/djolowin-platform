@@ -7,9 +7,10 @@
             <select id="rarity-filter" name="rarity" class="form-control">
               <option value="">All Rarities</option>
               <option value="Common" {% if request.GET.rarity == 'common' %}selected{% endif %}>Common</option>
+              <option value="Limited" {% if request.GET.rarity == 'limited' %}selected{% endif %}>Limited</option>
               <option value="Rare" {% if request.GET.rarity == 'rare' %}selected{% endif %}>Rare</option>
-              <option value="Epic" {% if request.GET.rarity == 'epic' %}selected{% endif %}>Epic</option>
-              <option value="Legendary" {% if request.GET.rarity == 'legendary' %}selected{% endif %}>Legendary</option>
+              <option value="Super Rare" {% if request.GET.rarity == 'epic' %}selected{% endif %}>Super Rare</option>
+              <option value="Unique" {% if request.GET.rarity == 'legendary' %}selected{% endif %}>Unique</option>
             </select>
         </div>
         {% if request.GET.rarity %}

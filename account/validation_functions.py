@@ -28,8 +28,8 @@ def check_username_in_reserved_names(username):
 
 def check_username_exists(username):
     """This method is used to check if the username exists."""
-    if not User.objects.filter(username__iexact=username).exists():
-        raise forms.ValidationError(_("A user with that username does not exist."))
+    if User.objects.filter(username__iexact=username).exists():
+        raise forms.ValidationError(_("A user with that username already exist."))
     return username
 
 

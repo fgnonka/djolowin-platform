@@ -16,15 +16,15 @@ def create_master_team_collection():
 
     # Loop through teams and create a master team collection for each team
     for team in teams:
-        reward = DJOBAReward.objects.get(name="Original Team Reward")
-        rarity = "Rare"
+        rarity = "Limited"
+        reward = DJOBAReward.objects.get(name=f"Original {rarity} Team Reward")
         # Get all available cards of the current team
         cards_to_register = PlayerCard.objects.filter(
             Q(player__team=team) & Q(index=0) & Q(rarity__name=rarity)
         )
         master_team_collection = Collection(
             name=f"{rarity} {team.name} Master Team Collection",
-            description=f"This is the master collection for the {team.name} team.",
+            description=f"This is the {rarity} master collection for the {team.name} team.",
             reward=reward,
             team=team,
         )

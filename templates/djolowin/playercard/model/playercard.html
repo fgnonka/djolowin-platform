@@ -7,8 +7,10 @@
         style="background-image: url({% static 'card-outline-templates/rare-card-template.jpeg' %});"
         {% elif playercard.rarity.name == 'Super Rare' %}
         style="background-image: url({% static 'card-outline-templates/super-rare-card-template.jpeg' %});"
-        {% elif playercard.rarity.name == 'Legendary' %}
-        style="background-image: url({% static 'card-outline-templates/legendary-card-template.jpeg' %});"
+        {% elif playercard.rarity.name == 'Limited' %}
+        style="background-image: url({% static 'card-outline-templates/limited-card-template.jpeg' %});"
+        {% elif playercard.rarity.name == 'Unique' %}
+        style="background-image: url({% static 'card-outline-templates/unique-card-template.jpeg' %});"
         {% endif %}
         >
     <div class="card-header border-0 bg-transparent">
@@ -31,9 +33,9 @@
         </div>
     </div>
     <div class="card-body">
-        {% if playercard.rarity.name == 'Rare' %}
+        {% if playercard.rarity.name == 'Rare' or playercard.rarity.name == 'Super Rare' or playercard.rarity.name == 'Unique' %}
         <img src="{% static 'images/my-project.png' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
-        {% elif playercard.rarity.name == 'Common' %}
+        {% elif playercard.rarity.name == 'Common' or playercard.rarity.name == 'Limited' %}
         <img src="{% static 'images/soccer_figure-removebg.png' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
         {% endif %} 
         <div class="card-footer border-0 bg-transparent mt-5">
