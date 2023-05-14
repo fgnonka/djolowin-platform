@@ -101,9 +101,10 @@
 						</div>
 						<div class="p-2">
 							{% if not active_auctions %}
-							<a class="text-decoration-none lightext" href="{% url 'auction:create_auction' card_pk=playercard.pk %}"
-								>Create an Auction for this card</a
-							>
+							
+							<a class="text-decoration-none lightext" href="{% url 'auction:create_auction' card_pk=playercard.pk %}">
+								<button  class="btn secondary-search-btn">Create an Auction for this card</button>
+							</a>
 							{% endif %}
 							<div id="modify-price-form" style="display: none">
 								<form method="post" action="{% url 'playercard:update_price' playercard.id %}">

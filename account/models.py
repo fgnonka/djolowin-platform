@@ -94,7 +94,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         default="default.png", upload_to="profile_images", blank=True, null=True
     )
     phone_number = PhoneNumberField(blank=True, default="", db_index=True)
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
 
+    login_points = models.PositiveIntegerField(default=0)
     # User Status
     # A timestamp representing when this object was created.
     date_joined = models.DateTimeField(_("Date joined"), auto_now_add=True)
@@ -121,7 +123,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(_("Verified"), default=False)
     note = models.TextField(null=True, blank=True)
     search_document = models.TextField(blank=True, default="")
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
     
     
 
@@ -226,3 +227,9 @@ class CustomerEvent(models.Model):
     
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(type={self.event_type!r}, user={self.user!r})"
+
+
+class CheckInHistory(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="check_in_history", on_delete=models.CASCADE)
+    check_in_time = models.DateTimeField(auto_now_add=True)
+    check_in_window = models.CharField(max_length=255, blank=True, null=True)

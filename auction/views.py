@@ -33,14 +33,16 @@ class ActiveAuctionListView(LoginRequiredMixin, ListView):
             active_auctions = active_auctions.filter(card__rarity__name=rarity)
         if form.is_valid():
             card_name = form.cleaned_data.get("card_name")
-            min_end_time = form.cleaned_data.get("min_end_time")
+            team_name = form.cleaned_data.get("team_name")
 
             if card_name:
                 active_auctions = active_auctions.filter(
                     card__player__name__icontains=card_name
                 )
-            if min_end_time:
-                active_auctions = active_auctions.filter(end_time__gte=min_end_time)
+            if team_name:
+                active_auctions = active_auctions.filter(
+                    card__player__team__name__icontains=team_name
+                )
         return active_auctions
 
     def get_context_data(self, **kwargs):

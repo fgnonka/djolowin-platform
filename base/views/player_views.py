@@ -3,8 +3,9 @@ from django.shortcuts import get_object_or_404
 from base.models import Player, Team
 from django.shortcuts import render
 
+from core.mixins import CustomDispatchMixin
 
-class PlayerListView(ListView):
+class PlayerListView(CustomDispatchMixin, ListView):
     model = Player
     context_object_name = "list_players"
     template_name = "djolowin/base/players_list_by_teams.html"
@@ -24,7 +25,7 @@ class PlayerListView(ListView):
 
 
 
-class PlayerDetailView(DetailView):
+class PlayerDetailView(CustomDispatchMixin, DetailView):
     model = Player
     context_object_name = "player"
     template_name = "djolowin/base/player_detail.html"

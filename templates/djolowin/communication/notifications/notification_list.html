@@ -6,12 +6,12 @@
 			{% if notifications %}
 			<div class="list-group mt-4">
 				{% for notification in notifications %}
-				<a href="#" class="list-group-item list-group-item-info">
+				<a href={% url 'communication:notification-detail' notification.id  %} class="list-group-item list-group-item-info">
 					<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{ notification.subject }}</h5>
 						<small>{{ notification.date_read|date:"M d, Y h:i A" }}</small>
 					</div>
-					<p class="mb-1">{{ notification.body }}</p>
+					<h6 class="mb-1">{{ notification.body }}</h6>
             {% if notification.date_read %}
             <span class="badge badge-secondary">Read</span>
             {% else %}

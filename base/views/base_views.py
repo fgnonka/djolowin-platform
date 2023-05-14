@@ -1,13 +1,12 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
 
+from account.decorators import user_is_active
 from base.models import Team, Player
 from playercard.models import PlayerCard, CardRarity
 from playercard.utils import list_of_cards_to_display
-from account.decorators import user_is_active
-
-
 
 
 @user_is_active
@@ -20,6 +19,8 @@ def homeview(request):
     }
     return render(request, "djolowin/base/home.html", context)
 
+class HomeView(View):
+    pass
 
 def search(request):
     query = request.GET.get('q')

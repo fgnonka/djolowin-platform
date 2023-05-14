@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from base.models import Team
+from django.core.validators import MinValueValidator
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -31,6 +33,7 @@ class PlayerCard(models.Model):
 
     
     for_sale = models.BooleanField(default=True)
+    edition = models.IntegerField(default=2024)
     is_public = models.BooleanField(
         _("Is public"),
         default=True,
@@ -52,13 +55,13 @@ class PlayerCard(models.Model):
         related_name="playercards",
     )
     rarity = models.ForeignKey(
-        "playercard.CardRarity",
+        CardRarity,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="cards",
     )
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0, validators=[MinValueValidator(2000)])
     image = models.ImageField(upload_to="uploads/playercards", null=True, blank=True)
     index = models.IntegerField(null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)

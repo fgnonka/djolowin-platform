@@ -46,9 +46,9 @@ INSTALLED_APPS = [
     "django_countries",
     "django_extensions",
     "django_filters",
-    "rest_framework",
     "graphene_django",
     "phonenumber_field",
+    "rest_framework",
     # local apps
     "account",
     "analytics",
@@ -83,6 +83,7 @@ ROOT_URLCONF = "djolowin.urls"
 
 context_processors = [
     "communication.notifications.context_processors.notifications",
+    "wallet.context_processors.user_balance",
     "django.template.context_processors.debug",
     "django.template.context_processors.request",
     "django.contrib.auth.context_processors.auth",

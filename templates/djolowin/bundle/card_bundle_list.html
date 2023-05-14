@@ -1,54 +1,81 @@
-{% extends 'djolowin/main.html' %} {% block content %}
-<h1>Card Bundles</h1>
+{% extends 'djolowin/main.html' %} 
+{% load static %}
 
-<form method="get" action="{% url 'bundle:bundles-list' %}">
-	{{ filter_form.as_p}}
-	<input type="submit" class="btn btn-outline-primary" value="Search" />
-	<div class="card-bundle-container">
-		{% for bundle in bundles %}
-		<div class="card-bundle">
-			{% if bundle.cover_image %}
-			<img src="{{ bundle.cover_image.url }}" alt="{{ bundle.name }} cover image" />
-			{% endif %}
-			<h2>{{ bundle.name }}</h2>
-			<p>{{ bundle.description }}</p>
-			<p>Price: {{ bundle.price }}</p>
+{% block content %}
+<h1>Card Bundles</h1>
+<div class="container-lg">
+	<div class="row" style="display: flex; justify-content: center; align-items: center">
+		{% for rarity in rarities %}
+		<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+			<div class="card rounded card-template hover14 border-secondary m-3" 
+			{% if rarity.name == 'Common' %}
+        style="background-image: url({% static 'card-outline-templates/common-card-template.jpeg' %});"
+        {% elif rarity.name == 'Rare' %}
+        style="background-image: url({% static 'card-outline-templates/rare-card-template.jpeg' %});"
+        {% elif rarity.name == 'Super Rare' %}
+        style="background-image: url({% static 'card-outline-templates/super-rare-card-template.jpeg' %});"
+        {% elif rarity.name == 'Limited' %}
+        style="background-image: url({% static 'card-outline-templates/limited-card-template.jpeg' %});"
+        {% elif rarity.name == 'Unique' %}
+        style="background-image: url({% static 'card-outline-templates/unique-card-template.jpeg' %});"
+        {% endif %}
+			>
+				<div class="card-header border-0 bg-transparent">
+					<div class="card-container">
+						<div class="card-body justify-content">
+							<h5 class="card-title text-white">{{ rarity }} Bundle</h5>
+							<img src="{% static 'images/ball.jpg' %}" 
+							alt="exposed brick wall in a hipster cafe" class="img-fluid" />
+							<div class="position-absolute bottom-0 start-0 p-2 text-white">
+								{% if rarity.name == 'Common' %}
+								<h6 class="card-text">Obtain it for {{ common_price }} DJOBA</h6>
+								{% elif rarity.name == 'Rare' %}
+								<h6 class="card-text">Obtain it for {{ rare_price }} DJOBA</h6>
+								{% elif rarity.name == 'Limited' %}
+								<h6 class="card-text">Obtain it for {{ limited_price }} DJOBA</h6>
+								{% else %}
+								<h6 class="card-text ">Obtain it for  DJOBA</h6>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card-footer">
+				<button type="button" class="btn search-btn" data-bs-toggle="modal" data-bs-target="#purchaseModal-{{ rarity.id }}">
+					<h6>Buy a {{ rarity.name }} Bundle</h6>
+				</button>
+			</div>
 		</div>
-		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewAndBuyModal">
-			Purchase for {{ bundle.price }} DJOBA
-		</button>
-		<div
-			class="modal fade"
-			id="reviewAndBuyModal"
-			tabindex="-1"
-			aria-labelledby="reviewAndBuyModalLabel"
-			aria-hidden="true">
+		<!-- Modal -->
+		<div class="modal fade" id="purchaseModal-{{ rarity.id }}" tabindex="-1" aria-labelledby="purchaseModalLabel-{{ rarity.id }}" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="reviewAndBuyModalLabel">Review and Pay</h5>
+						<h5 class="modal-title" id="purchaseModalLabel-{{ rarity.id }}">Confirm Purchase</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<div class="col-md-6">
-							<h4>Bundle Details</h4>
-							<p><strong>Name:</strong> {{ bundle.name }}</p>
-							<p><strong>Description:</strong> {{ bundle.description }}</p>
-							<p><strong>Price:</strong> {{ bundle.price }}</p>
-						</div>
-
-						<h6>Your Actual Balance</h6>
-						<p>{{ request.user.get_wallet.balance }}</p>
+						<h4>Are you sure you want to buy the {{ rarity.name }} bundle?</h4>
+						{% if rarity.name == 'Common' %}
+						<h6>It will cost you {{ common_price }} DJOBA.</h6>
+						{% elif rarity.name == 'Rare' %}
+						<h6>It will cost you {{ rare_price }} DJOBA.</h6>
+						{% elif rarity.name == 'Limited' %}
+						<p>It will cost you {{ limited_price }} DJOBA.</p>
+						{% endif %}
+						<h6>You currently have {{ available_balance }} DJOBA.</h6>
+						
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-						<a href="{% url 'bundle:bundle-purchase' bundle.id %}" class="btn btn-primary">Confirm Purchase</a>
+						<a class="btn btn-primary" href="{% url 'bundle:bundle-purchase-rarity' rarity.name %}">Buy Now</a>
 					</div>
 				</div>
 			</div>
 		</div>
-
-		{% endfor %}
+		{% endfor %} 
+		{% include 'djolowin/pagination.html' %} 
 	</div>
-	{% include 'djolowin/pagination.html' %} {% endblock %}
-</form>
+</div>
+{% endblock %}

@@ -30,10 +30,10 @@ def random_image():
 
 def create_playercards():
     for player in players:
-        for i in range(250):
+        for i in range(101):
             owner = None
             common_rarity = CardRarity.objects.get(name="Common")
-            common_price = random.randint(0, 100)
+            common_price = 10000
             playercard_common = PlayerCard(
                 for_sale=True,
                 is_public=True,
@@ -48,10 +48,10 @@ def create_playercards():
             playercard_common.save()
             print(f"PlayerCard {playercard_common.slug} created successfully!")
         
-        for i in range(101):
+        for i in range(51):
             owner = None
             limited_rarity = CardRarity.objects.get(name="Limited")
-            limited_price = random.randint(1000, 2500)
+            limited_price = 40000
             playercard_limited = PlayerCard(
                 for_sale=True,
                 is_public=True,
@@ -66,10 +66,10 @@ def create_playercards():
             playercard_limited.save()
             print(f"PlayerCard {playercard_limited.slug} created successfully!")
             
-        for i in range(51):
+        for i in range(26):
             owner = None
             rare_rarity = CardRarity.objects.get(name="Rare")
-            rare_price = random.randint(2500, 5000)
+            rare_price = 80000
             playercard_rare = PlayerCard(
                 for_sale=True,
                 is_public=True,
@@ -87,7 +87,7 @@ def create_playercards():
         for i in range(11):
             owner = None
             super_rare_rarity = CardRarity.objects.get(name="Super Rare")
-            super_rare_price = random.randint(5000, 10000)
+            super_rare_price = 200000
             playercard_super_rare = PlayerCard(
                 for_sale=True,
                 is_public=True,
@@ -105,7 +105,7 @@ def create_playercards():
         for i in range(2):
             owner = None
             unique_rarity = CardRarity.objects.get(name="Unique")
-            unique_price = 100000
+            unique_price = 600000
             playercard_unique = PlayerCard(
                 for_sale=True,
                 is_public=True,

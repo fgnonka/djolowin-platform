@@ -1,0 +1,14 @@
+Implement a point system for whenever a user watch some ads:
+- An ad watched can award the user some points
+- a progress bar can visually help the user keep track of how many points he owns
+
+
+Implement a wider variety of packages:
+-mix and match
+
+
+Card Pricing policy:
+- A card purchased by a user can have its price modified and put on auction however he/she pleases
+- A card purchased from a bundle can have its price fixed above the minimum requirement of the application
+
+Implement a system to allow the user to subscribe to a card and receive notifications about it(Auctions)

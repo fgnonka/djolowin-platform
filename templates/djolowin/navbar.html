@@ -66,14 +66,18 @@
 					Notification Center
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<span class="notification-counter">{{ notifications.count }}</span>
+					{% if unread_notifications.count > 0 %}
+						<span class="notification-counter">{{ unread_notifications.count }}</span>
+					{% endif %}
 					<div class="dropdown-item">
 							{% for notification in notifications %}
+							{% if forloop.counter <= 6 %}
 								<a class="dropdown-item" href="{% url 'communication:notifications-inbox' %}">
 									{{ notification.subject }}
 								</a>
+							{% endif %}
 							{% empty %}
-								<a class="dropdown-item" href="#">No unread notifications</a>
+								<a class="dropdown-item" href="{% url 'communication:notifications-inbox' %}">No unread notifications</a>
 							{% endfor %}
 						</div>
 				</div>

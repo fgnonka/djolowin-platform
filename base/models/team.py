@@ -4,7 +4,6 @@ from django.urls import reverse
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=55, null=True, blank=True)
     country = models.ForeignKey(
         "base.Country", on_delete=models.PROTECT, null=False, blank=False
     )
@@ -18,12 +17,9 @@ class Team(models.Model):
     )
 
     def __str__(self):
-        if self.name:
-            return f"{self.name} --- {self.year}"
-        else:
-            return f"{self.country.country.name} --- {self.year}"
+        return f"{self.country.country.name} --- {self.year}"
     def _generate_slug(self):
-        name = self.name or self.country.country.name
+        name = self.country.country.name
         value = f"{name}-{self.year}"
         return slugify(value, allow_unicode=False)
     def get_absolute_url(self):
@@ -38,4 +34,4 @@ class Team(models.Model):
         ordering = ["year"]
         verbose_name = "Team"
         verbose_name_plural = "Teams"
-        unique_together = ("name", "country", "year")
+        unique_together = ("country", "year")

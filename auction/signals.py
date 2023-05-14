@@ -4,5 +4,6 @@ from django.dispatch import receiver, Signal
 from .models import Bid
 
 
+auction_started = Signal()
+bid_submitted = Signal()
 completed_auction = Signal()
-

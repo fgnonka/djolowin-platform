@@ -10,9 +10,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from wallet.models import UserWallet
 from account.models import CustomUser
+from communication.notifications.actions import send_notification
 from transaction.utils import create_currency_purchase_transaction
+from wallet.models import UserWallet
 from .models import CurrencyPackage
 
 
@@ -113,6 +114,11 @@ def stripe_webhook(request):
             UserWallet.objects.filter(user=session_user).update(
                 balance=models.F("balance") + currency_package.in_app_currency
             )
+            
+            send_notification(recipient=session_user, subject=f"Purchase of {currency_package.name} successful!", 
+                              message=f"""Thank you for your purchase of {currency_package.name}! 
+                              You have received {currency_package.in_app_currency} in-app currency.
+                              Your new balance is {session_user.wallet.balance} DJOBA.""")
 
             # Perform any other actions required for a successful purchase
 

@@ -5,7 +5,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djolowin.settings")
 django.setup()
 from django.db.models import Q
 from collection.models import Collection
-from playercard.models import PlayerCard
+from playercard.models import PlayerCard, CardRarity
 from base.models import Team, Player
 from reward.models import DJOBAReward
 
@@ -16,15 +16,16 @@ def create_master_team_collection():
 
     # Loop through teams and create a master team collection for each team
     for team in teams:
-        rarity = "Limited"
-        reward = DJOBAReward.objects.get(name=f"Original {rarity} Team Reward")
+        rarity = "Unique"
+        reward = DJOBAReward.objects.get(name=f"{rarity} Rarity Team Reward")
         # Get all available cards of the current team
         cards_to_register = PlayerCard.objects.filter(
             Q(player__team=team) & Q(index=0) & Q(rarity__name=rarity)
         )
         master_team_collection = Collection(
-            name=f"{rarity} {team.name} Master Team Collection",
-            description=f"This is the {rarity} master collection for the {team.name} team.",
+            name=f"{rarity} {team} Master Team Collection",
+            description=f"This is the {rarity} master collection for the {team}.",
+            rarity=CardRarity.objects.get(name=rarity),
             reward=reward,
             team=team,
         )

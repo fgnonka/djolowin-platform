@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path
 from django.views import generic
 
-from communication.notifications.views import NotificationListView, ArchiveView, InboxView
+from communication.notifications.views import DetailView, ArchiveView, InboxView
 
 notification_inbox_view = InboxView.as_view()
 notification_archive_view = ArchiveView.as_view()
-notification_detail_view = NotificationListView.as_view()
+notification_detail_view = DetailView.as_view()
 
 app_name = 'communication'
 
@@ -26,5 +26,5 @@ urlpatterns = [
             path(
                 'notifications/<int:pk>/',
                 login_required(notification_detail_view),
-                name='notifications-detail'),
+                name='notification-detail'),
 ]

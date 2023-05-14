@@ -4,11 +4,11 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
 
-from account.mixins import PageTitleMixin
+from core.mixins import PageTitleMixin, CustomDispatchMixin
 from communication.models import Notification
 
 
-class NotificationListView(PageTitleMixin, generic.ListView):
+class NotificationListView(CustomDispatchMixin, PageTitleMixin, generic.ListView):
     """A list of all notifications for the current user."""
 
     model = Notification
@@ -45,9 +45,9 @@ class ArchiveView(NotificationListView):
         )
 
 
-class DetailView(PageTitleMixin, generic.DetailView):
+class DetailView(CustomDispatchMixin, PageTitleMixin, generic.DetailView):
     model = Notification
-    template_name = "djolowin/communication/notification_detail.html"
+    template_name = "djolowin/communication/notifications/detail.html"
     context_object_name = "notification"
     active_tab = "notifications"
     

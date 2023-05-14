@@ -18,8 +18,6 @@ class CustomerEvents:
     PLACED_SINGLE_ORDER = "placed_single_order"  # created a single item order
     PLACED_BUNDLE_ORDER = "placed_bundle_order"  # created a bundles items order
     PLACED_TOPUP_ORDER = "placed_topup_order"  # created a topup order
-    PLACED_AUCTION_BID = "placed_auction_bid"  # created an auction bid
-    RECEIVED_AUCTION_BID = "received_auction_bid"  # received an auction bid
     CREATED_AUCTION = "created_auction"  # created an auction
     DELETED_AUCTION = "deleted_auction"  # deleted an auction
     CURRENCY_WITHDRAWN = (
@@ -72,8 +70,6 @@ class CustomerEvents:
         (PLACED_TOPUP_ORDER, "A topup order was placed"),
         (CREATED_AUCTION, "An auction was created"),
         (DELETED_AUCTION, "An auction was deleted"),
-        (PLACED_AUCTION_BID, "An auction bid was submitted"),
-        (RECEIVED_AUCTION_BID, "An auction bid was received"),
         # Promotions
         (WATCHED_ADS_IN_PLATFORM, "The customer watched ads in the platform"),
         (USED_PROMO_CODE, "The customer used a promo code"),

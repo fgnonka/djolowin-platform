@@ -6,7 +6,7 @@
         {% for currency_package in currency_packages %}
             <li>
                 <h2>Name: {{ currency_package.name }}</h2>
-                <p>Price: {{ currency_package.price }}</p>
+                <p>Price: ${{ currency_package.price }}</p>
                 <p>Amount you will receive: {{ currency_package.in_app_currency }} DJOBA</p>
                 <a href="{% url 'currency:purchase_currency_package' package_id=currency_package.id %}">Buy {{ currency_package.name }}</a>
 

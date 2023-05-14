@@ -12,7 +12,7 @@
 }
 
 .card-template:hover {
-	border: 0px solid #81ffd9;
+	border: 0px solid #bef3e3;
 	box-shadow: 0 0 40px #81ffd9;
 }
 
@@ -61,6 +61,17 @@
 	font-size: 1rem;
 }
 .search-btn:hover {
+	background-color: #81ffd9;
+	color: rgb(0, 0, 0);
+}
+
+.secondary-search-btn {
+	color: rgb(255, 255, 255);
+	border-color: #ffffff;
+	font-size: 1rem;
+}
+
+.secondary-search-btn:hover {
 	background-color: #81ffd9;
 	color: rgb(0, 0, 0);
 }

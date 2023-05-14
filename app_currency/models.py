@@ -11,8 +11,8 @@ class CurrencyPackage(models.Model):
 
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    og_price = models.DecimalField(max_digits=10, decimal_places=2)
-    stripe_price = models.IntegerField()
+    og_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    stripe_price = models.IntegerField(blank=True)
     in_app_currency = models.IntegerField()
     purchases = models.ManyToManyField(
         User,
@@ -34,3 +34,4 @@ class CurrencyPackage(models.Model):
             # Stripe price is in cents
             self.stripe_price = int(self.price * 100)
         super().save(*args, **kwargs)
+

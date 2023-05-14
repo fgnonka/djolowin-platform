@@ -1,7 +1,9 @@
 {% extends 'djolowin/main.html' %} {% block content %}
+<div>
 <h1>Purchase {{ currency_package.name }}</h1>
 <p>Price: ${{ currency_package.price }}</p>
 <p>In-app currency: {{ currency_package.in_app_currency }} DJOBA</p>
+</div>
 
 <form method="POST" action="{% url 'currency:purchase_currency_package' package_id=currency_package.id %}">
 	{% csrf_token %}

@@ -48,4 +48,5 @@ class BidForm(forms.ModelForm):
 
 class AuctionSearchForm(forms.Form):
     card_name = forms.CharField(required=False, label="Card name")
-    min_end_time = forms.DateTimeField(required=False, label="Ending after", widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    team_name = forms.CharField(required=False, label="Team name")
+    # min_end_time = forms.DateTimeField(required=False, label="Ending after", widget=DateTimeInput(attrs={'type': 'datetime-local'}))

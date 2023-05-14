@@ -5,10 +5,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic.detail import SingleObjectMixin
 
+from communication.notifications.actions import send_notification
 from wallet.models import UserWallet
 from .forms import BidForm
 from .models import Bid
 from .utils import add_watcher, increase_number_of_bids
+from .signals import bid_submitted
 
 
 class BidFormMixin(SingleObjectMixin):
@@ -30,25 +32,27 @@ class BidFormMixin(SingleObjectMixin):
                 add_watcher(bidder, auction)
                 if previous_bid:
                     previous_bidder = previous_bid.bidder
-                    previous_bidder_wallet = UserWallet.objects.get(user=previous_bidder)
+                    previous_bidder_wallet = UserWallet.objects.get(
+                        user=previous_bidder
+                    )
                     previous_bidder_wallet.reserved_balance -= previous_bid.amount
                     previous_bidder_wallet.save()
                 bid.save()
                 increase_number_of_bids(auction)
-                
+                bid_submitted.send(sender=self.__class__, bid=bid)
+
                 messages.success(
                     request,
                     "Your bid of {} has been accepted.".format(bid_amount),
                 )
                 if previous_bid and previous_bidder != bidder:
-                    send_mail(
-                        "Your bid has been outbid",
-                        f"Someone has outbid you on {auction}. Visit the auction page to place a new bid.",
-                        "noreply@djolo.win",
-                        [previous_bidder.email],
-                        fail_silently=False,
+                    send_notification(
+                        recipient=previous_bidder,
+                        subject="Bid on {} has been outbid".format(auction.title),
+                        message="Your bid of {} on {} has been outbid by {}.".format(
+                            previous_bid.amount, auction.title, bidder
+                        ),
                     )
-                return redirect(reverse("auction:active_auctions", ))
             else:
                 messages.info(
                     request,
@@ -56,6 +60,10 @@ class BidFormMixin(SingleObjectMixin):
                     It could be that you do not have enough funds in your wallet, 
                     or that the amount is lower than the current bid.""",
                 )
-                return redirect(reverse("auction:active_auctions", ))
+                return redirect(
+                    reverse(
+                        "auction:active_auctions",
+                    )
+                )
 
         return self.render_to_response(self.get_context_data(bid_form=form))

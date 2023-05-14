@@ -1,21 +1,5 @@
 {% extends 'djolowin/main.html' %} {% block content %} {% load static %}
-<style>
-	table {
-		border-collapse: collapse;
-	}
 
-	th {
-		padding: 10px;
-		border-left: 4px solid white;
-	}
-	td {
-		padding: 10px;
-		border-left: 4px solid white;
-	}
-	td:first-child {
-		border-left: none;
-	}
-</style>
 {% if bundle.sold_to == request.user %}
 <h1>Below are details of the Bundle you purchased: </h1>
 <h2>{{ bundle.name }}</h2>
@@ -45,7 +29,7 @@
 			<td>{{ card.player.position }}</td>
 			<td>{{ card.player.team }}</td>
 			<td>#{{ card.player.jersey_number }}</td>
-			<td><img src="{% static 'images/soccer_figure.png' %}" alt="{{ card.name }}" width="100" height="100" /></td>
+			<td><img src="{% static 'images/soccer_figure.jpg' %}" alt="{{ card.name }}" width="100" height="100" /></td>
 			<td>{{ card.rarity }}</td>
 		</tr>
 		{% endfor %}

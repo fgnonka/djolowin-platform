@@ -15,6 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from auction.models import Auction
 from base.models import Player
+from core.mixins import CustomDispatchMixin
 from playercard.models import PlayerCard, CardRarity
 from playercard.utils import list_of_cards_to_display
 from playercard.signals import playercard_viewed
@@ -45,7 +46,7 @@ class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
         return redirect("playercard:playercard-detail", pk=playercard.pk)
 
 
-class PlayerCardDetailView(DetailView):
+class PlayerCardDetailView(CustomDispatchMixin, DetailView):
     context_object_name = "playercard"
     model = PlayerCard
     view_signal = playercard_viewed
@@ -73,7 +74,7 @@ class PlayerCardDetailView(DetailView):
         return context
 
 
-class PlayerCardListView(ListView, ):
+class PlayerCardListView(CustomDispatchMixin, ListView):
     """Alternative Playercard Listview"""
 
     model = PlayerCard
@@ -121,7 +122,7 @@ class PlayerCardListView(ListView, ):
         return context
 
 
-class UserPlayerCardListView(ListView):
+class UserPlayerCardListView(CustomDispatchMixin, ListView):
     model = PlayerCard
     context_object_name = "playercards"
     template_name = "djolowin/playercard/owned_playercard_list.html"
