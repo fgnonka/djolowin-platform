@@ -233,9 +233,7 @@ EMAIL_TEMPLATE_NAME = "djolowin/account/password_reset_email.html"
 # Stripe settings for payment gateway
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
-STRIPE_WEBHOOK_SECRET = (
-    "whsec_f5d3f7bca1dfdc701d6a19f27ad56d1c965503bd7da1d0784e5c2eddc9195707"
-)
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 stripe.api_key = STRIPE_SECRET_KEY
 
 # CORS settings
