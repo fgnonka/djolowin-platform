@@ -3,7 +3,13 @@
 	<h1>Player Card Search</h1>
 	<br />
 	{% if user.is_authenticated %}
-    {% include "djolowin/playercard/search/searchform.html" %}
+	<div class="form-container mt-0 mb-4">
+		<form method="get" id="search-form">
+			{{ form.as_p }}
+			<button class="btn search-btn" type="submit">Search</button>
+		</form>
+		{% comment %} <button class="btn btn-danger mt-2" type="button" id="reset-filters">Reset Filters</button> {% endcomment %}
+	</div>
 	{% endif %}
 	<br />
 	{% if playercards %}
@@ -12,18 +18,21 @@
 		<div class="col-md-4 col-lg-3 mb-4">
 			{% include "djolowin/playercard/model/playercard.html" %}
             <div class="card-footer m-1">
-                <span class="badge badge-default rounded-pill text-dark" >Purchase for {{ playercard.price }} DJOBA</span>
+				<button type="button" class="btn search-btn" data-bs-toggle="modal" data-bs-target="#purchaseCardModal-{{ playercard.id }}">
+                Purchase for {{ playercard.price }} DJOBA
+				</button>
+				<!-- Modal -->
+				{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}
             </div>
 		</div>
 		{% empty %}
 		<div class="col-12">
 			<p>No cards found in your collection. Try adjusting your filters or search.</p>
 		</div>
-		{% endfor %}
 	</div>
+		{% endfor %}
 	{% endif %}
 	{% include "djolowin/pagination.html"  %} 
-    {% block scripts %}
-{% endblock %}
+    
     {% endblock %}
 </div>

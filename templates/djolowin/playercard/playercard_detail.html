@@ -39,7 +39,7 @@
 								</div>
 								<div class="p-2">
 									<h1 style="color: white; font-size: 15px">
-										<a> {{ playercard.player.team.name }} {{ playercard.player.team.year }} </a>
+										<a> {{ playercard.player.team.name }}</a>
 									</h1>
 								</div>
 							</div>
@@ -95,16 +95,32 @@
 					</div>
 					<div class="d-flex">
 						<div class="p-2 flex-grow-1">
-							{% comment %} change the is_public to "Hide my card" {% endcomment %}
-							{% if request.user == playercard.owner %} {% if not playercard.is_locked %}
+							{% if playercard.owner == None %}
+							<a
+								type="button"
+								data-bs-toggle="modal"
+								data-bs-target="#purchaseCardModal-{{ playercard.id }}">
+								<span class="badge badge-default rounded-pill text-dark"
+									>Purchase for {{ playercard.price }} DJOBA</span
+								>
+							</a>
+							{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}
+							{% endif %} {% if request.user == playercard.owner %} {% if not playercard.is_locked %}
 							<button id="modify-price-btn" class="btn search-btn">Modify Card</button>
 						</div>
-						<div class="p-2">
+						<div class="p-2 flex-grow-0">
 							{% if not active_auctions %}
-							
-							<a class="text-decoration-none lightext" href="{% url 'auction:create_auction' card_pk=playercard.pk %}">
-								<button  class="btn secondary-search-btn">Create an Auction for this card</button>
+							<div>
+							<a
+								type="button"
+								data-bs-toggle="modal"
+								data-bs-target="#auctionCreateModal-{{ playercard.id }}">
+								<span class="badge badge-default rounded-pill text-dark"
+									>Create and auction for this card</span
+								>
 							</a>
+						</div>
+						{% include "djolowin/auction/modal_form/auction_create_modal.html" %}
 							{% endif %}
 							<div id="modify-price-form" style="display: none">
 								<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
@@ -123,15 +139,23 @@
 		<div class="group mt-5">
 			<h3 class="text-white">Last {{ playercard.rarity.name }} Auctions</h3>
 			<div class="flex-child">
-				<div class="d-flex">
-					{% for auction in past_auctions %}
-					<div class="p-2 flex-grow-1">
-						<h1 style="color: white; font-size: 15px">{{auction.card.player.name}}</h1>
-					</div>
+				{% for auction in past_auctions %}
+				<div class="d-flex m-2 flex-column">
 					<div class="p-2">
-						<h1 style="color: white; font-size: 15px">
-							<a> {{ auction.current_bid }} DJOBA </a>
-						</h1>
+						<a class="text-decoration-none lightext" href="{% url 'auction:auction_detail' auction.id %}">
+							<h1 style="font-size: 15px">{{auction.card.player.name}}</h1>
+						</a>
+						{% if auction.highest_bidder %}
+						<div class="p-2">
+							<h1 style="color: white; font-size: 15px">
+								<a>Sold for {{ auction.get_highest_bid.amount }} DJOBA </a>
+							</h1>
+							{% else %}
+							<h1 style="color: white; font-size: 15px">
+								<a>No Buyer</a>
+							</h1>
+						</div>
+						{% endif %}
 					</div>
 					{% endfor %}
 				</div>

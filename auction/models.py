@@ -23,14 +23,16 @@ class Auction(models.Model):
         on_delete=models.SET_NULL,
     )
     start_time = models.DateTimeField(auto_now_add=True)
+    duration = models.PositiveIntegerField(default=1)
     end_time = models.DateTimeField()
     watchers = models.ManyToManyField(CustomUser, related_name="watched_auctions")
     auction_ended = models.BooleanField(default=False)
+    sold = models.BooleanField(default=False)
     
     class Meta:
         ordering = ["-start_time"]
         constraints = [
-            UniqueConstraint(fields=["card", "owner"], name="unique_auction")
+            UniqueConstraint(fields=["card", "owner","start_time"], name="unique_auction")
         ]
         
     @property
@@ -53,6 +55,13 @@ class Auction(models.Model):
         now = timezone.now()
         return self.end_time - now < timezone.timedelta(hours=1)
     
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            duration_in_delta = timezone.timedelta(hours=self.duration)
+            print(duration_in_delta)
+            start_time = timezone.now()
+            self.end_time = start_time + duration_in_delta
+        super().save(*args, **kwargs)
     
     def is_active(self):
         now = timezone.now()
@@ -78,7 +87,8 @@ class Auction(models.Model):
     
 
     def get_highest_bid(self):
-        return Bid.objects.filter(auction=self).order_by("-amount").first()
+        if self.current_bid:
+            return Bid.objects.filter(auction=self).order_by("-amount").first()
 
 
 class Bid(models.Model):

@@ -71,8 +71,6 @@ class UserUpdateForm(forms.ModelForm):
     password hash display field.
     """
 
-    email = forms.EmailField()
-
     class Meta:
         model = User
         fields = [

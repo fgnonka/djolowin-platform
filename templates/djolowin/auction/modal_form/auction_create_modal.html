@@ -1,0 +1,27 @@
+{% load static %}
+
+<div
+	class="modal fade "
+	id="auctionCreateModal-{{ playercard.id }}"
+	tabindex="-1"
+	aria-labelledby="auctionCreateModalLabel-{{ playercard.id }}"
+	aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered text-dark">
+		<div class="modal-content">
+			<div class="modal-header">
+                <h5
+                    class="modal-title"
+                    id="auctionCreateModalLabel-{{ playercard.id }}">
+                    Create auction for {{playercard}}
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-dark">
+                <form method="post">
+	{% csrf_token %} {{ auction_form }}
+	<button class="btn btn-outline-success" type="submit">Create Auction</button>
+</form>

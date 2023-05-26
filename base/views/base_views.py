@@ -1,26 +1,24 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 from account.decorators import user_is_active
 from base.models import Team, Player
+from core.mixins import CustomDispatchMixin
 from playercard.models import PlayerCard, CardRarity
 from playercard.utils import list_of_cards_to_display
 
 
-@user_is_active
-@login_required
-def homeview(request):
-    playercards = list_of_cards_to_display("homeview")
-
-    context = {
-        "playercards": playercards,
-    }
-    return render(request, "djolowin/base/home.html", context)
-
-class HomeView(View):
-    pass
+class HomeView(CustomDispatchMixin, LoginRequiredMixin, TemplateView):
+    template_name = "djolowin/base/home.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        playercards = list_of_cards_to_display("homeview")
+        context["playercards"] = playercards
+        return context
 
 def search(request):
     query = request.GET.get('q')

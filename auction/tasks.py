@@ -26,6 +26,12 @@ def check_auction_end():
             send_auction_ended_email(auction)
             auction.auction_ended = True
             auction.save()
+            for user in auction.watchers.all():
+                send_notification(
+                    recipient=user,
+                    subject=f"Auction of {auction.card} has ended!",
+                    message=f"The auction for {auction.card} has ended.",
+                )
 
 
 @shared_task

@@ -1,9 +1,8 @@
 {% block content %}
-    <h2>{{ notification.subject }}</h2>
-    <p>{{ notification.body }}</p>
-    <p>The auction for the following player card is about to end:</p>
-    <ul>
-        <li>{{ card.player.name }} ({{ card.rarity }})</li>
-    </ul>
-    <p>Place your final bids before it's too late!</p>
+    {{ notification.subject }}
+    {{ notification.body }}
+    The auction for the following player card is about to end:
+        {{ card.player.name }} ({{ card.rarity }}).
+    
+    Place your final bids before it's too late!
 {% endblock %}

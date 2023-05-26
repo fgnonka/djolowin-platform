@@ -1,22 +1,29 @@
-{% extends "djolowin/main.html" %} {% block content %}
-{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %}
-
-<p>Starting price: {{ auction.starting_price }}</p>
-<p>End time: {{ auction.end_time }}</p>
+{% extends "djolowin/main.html" %} {% block content %} {% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} {% if auction.current_bid %}
 <p>Highest bidder: {{ auction.highest_bidder.username }}</p>
 <p>Current Bid: {{ auction.current_bid }}</p>
+{% else %}
+<p>Starting price: {{ auction.starting_price }}</p>
+{% endif %}
+<p>End time: {{ auction.end_time }}</p>
 
-{% if user.is_authenticated and request.user != auction.owner  %} 
+{% if user.is_authenticated and request.user != auction.owner %}
 <form method="post" action="{% url 'auction:toggle_watcher' auction.pk %}">
 	{% csrf_token %}
-	<input type="submit" value="{% if user in auction.watchers.all %}Unsubscribe{% else %}Subscribe{% endif %}">
+	<input type="submit" value="{% if user in auction.watchers.all %}Unsubscribe{% else %}Subscribe{% endif %}" />
 </form>
-{% if request.user != auction.highest_bidder %}
-<h2>Bid on this auction</h2>
-<form method="post" action="{% url 'auction:auction_detail' auction.pk %}">
-	{% csrf_token %} {{ bid_form.as_p }}
-	<button class="btn search-btn" type="submit">Place Bid</button>
-</form>
+<div class="modal-div">
+	{% if request.user == auction.highest_bidder %}
+	<p class="text-success">You are the highest bidder on this auction.</p>
+	{% else %}
+	<button
+		type="button"
+		class="btn search-btn"
+		data-bs-toggle="modal"
+		data-bs-target="#auctionBidModal-{{ auction.id }}">
+		Place a bid
+	</button>
+	<!-- Modal -->
+	{% include "djolowin/auction/modal_form/auction_bid_modal.html" %}
+</div>
 
-{% endif %} {% endif %}
-{% endblock %}
+{% endif %} {% endif %} {% endblock %}

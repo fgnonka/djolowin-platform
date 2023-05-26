@@ -16,6 +16,10 @@ class Team(models.Model):
         blank=True,
     )
 
+    @property
+    def name(self):
+        return f"{self.country.country.name} {self.year}"
+    
     def __str__(self):
         return f"{self.country.country.name} --- {self.year}"
     def _generate_slug(self):

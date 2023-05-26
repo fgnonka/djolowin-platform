@@ -1,0 +1,25 @@
+{% load static %}
+<div
+	class="modal fade"
+	id="purchaseCardModal-{{ playercard.id }}"
+	tabindex="-1"
+	aria-labelledby="purchaseCardModalLabel-{{ playercard.id }}"
+	aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="purchaseCardModalLabel-{{ playercard.id }}">Purchase this Card: {{playercard}}</h5>
+
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<h5>Are you sure you want to purchase this card?</h5>
+				<h6> Your current balance is {{request.user.wallet.balance}} DJOBA</h6>                
+			</div>
+			<div class="modal-footer">
+                <a href="{% url 'playercard:purchase-playercard' playercard.id %}" class="btn btn-primary">Purchase for {{playercard.price}} DJOBA</a>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel Purchase</button>
+			</div>
+		</div>
+	</div>
+</div>

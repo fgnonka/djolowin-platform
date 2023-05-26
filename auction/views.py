@@ -10,13 +10,18 @@ from django.utils import timezone
 
 from playercard.models import PlayerCard
 from transaction.utils import create_auction_transaction
+from .mixins import AuctionSearchMixin
 from .models import Auction, Bid
 from .forms import AuctionForm, BidForm, AuctionSearchForm
 from .mixins import BidFormMixin
-from .utils import add_watcher, remove_watcher, has_existing_active_auction
+from .utils import (
+    add_watcher,
+    remove_watcher,
+    has_existing_active_auction,
+)
 
 
-class ActiveAuctionListView(LoginRequiredMixin, ListView):
+class ActiveAuctionListView(LoginRequiredMixin, AuctionSearchMixin, ListView):
     model = Auction
     template_name = "djolowin/auction/auction_list.html"
     context_object_name = "auctions"
@@ -26,29 +31,20 @@ class ActiveAuctionListView(LoginRequiredMixin, ListView):
         now = timezone.now()
         active_auctions = Auction.objects.filter(
             Q(start_time__lte=now) & Q(end_time__gte=now)
-        )
+        ).order_by("end_time")
         form = AuctionSearchForm(self.request.GET)
-        rarity = self.request.GET.get("rarity")
-        if rarity:
-            active_auctions = active_auctions.filter(card__rarity__name=rarity)
         if form.is_valid():
-            card_name = form.cleaned_data.get("card_name")
-            team_name = form.cleaned_data.get("team_name")
-
-            if card_name:
-                active_auctions = active_auctions.filter(
-                    card__player__name__icontains=card_name
-                )
-            if team_name:
-                active_auctions = active_auctions.filter(
-                    card__player__team__name__icontains=team_name
-                )
+            active_auctions = self.filter_auctions(active_auctions)
         return active_auctions
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        watched_auctions = Auction.objects.filter(
+            watchers__in=[self.request.user]
+        ).filter(auction_ended=False).order_by("end_time")
         context["bid_form"] = BidForm()
         context["form"] = AuctionSearchForm(self.request.GET)
+        context["watched_auctions"] = watched_auctions
         return context
 
 
@@ -67,8 +63,10 @@ def create_auction(request, card_pk):
             auction = form.save(commit=False)
             auction.card = card
             auction.owner = request.user
+            card.for_sale = False
+            card.is_public = False
+            card.save()
             try:
-                # auction.start_time = timezone.make_aware(auction.start_time)
                 auction.save()
                 create_auction_transaction(
                     seller=auction.owner,
@@ -87,6 +85,7 @@ def create_auction(request, card_pk):
                     request, "You already have an active auction for this card."
                 )
                 return redirect("playercard:playercard-detail", pk=card.pk)
+            messages.success(request, "Auction created successfully.")
             return redirect("auction:auction_detail", pk=auction.pk)
     else:
         form = AuctionForm()
@@ -98,11 +97,22 @@ def create_auction(request, card_pk):
 class AuctionDetailView(LoginRequiredMixin, DetailView, BidFormMixin):
     model = Auction
     template_name = "djolowin/auction/auction_detail.html"
+    """_summary_
+    """
+
+    def get_object(self, queryset=None):
+        auction = Auction.objects.get(pk=self.kwargs["pk"])
+        return auction
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["auction"] = Auction.objects.get(pk=self.kwargs["pk"])
-        context["bid_form"] = BidForm()
+        context["bid_form"] = BidForm(
+            initial={
+                "amount": self.object.current_bid
+                if self.object.current_bid
+                else self.object.starting_price
+            }
+        )
 
         return context
 
@@ -116,3 +126,27 @@ def toggle_watch(request, auction_pk):
         add_watcher(request.user, auction)
     auction.save()
     return redirect("auction:auction_detail", pk=auction.pk)
+
+
+class UserAuctionView(LoginRequiredMixin, AuctionSearchMixin, ListView):
+    model = Auction
+    template_name = "djolowin/auction/user_auctions.html"
+    context_object_name = "auctions"
+    paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
+
+    def get_queryset(self):
+        form = AuctionSearchForm(self.request.GET)
+        queryset = Auction.objects.filter(
+            owner=self.request.user, end_time__gte=timezone.now()
+        )
+        if form.is_valid():
+            queryset = self.filter_auctions(queryset)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = AuctionSearchForm(self.request.GET)
+        context["past_auctions"] = Auction.objects.filter(
+            owner=self.request.user, auction_ended=True
+        )[:4]
+        return context

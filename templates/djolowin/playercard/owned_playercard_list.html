@@ -4,37 +4,23 @@
 <h1>My Cards</h1>
 
 <div class="container ">
-    <div id="searchbox">
-    {% include "djolowin/playercard/search/searchform.html" %}
-
-    <form method="get" class="mb-3">
-        <div class="row">
-            <div class="col">
-                <input type="text" class="form-control" name="search" value="{{ request.GET.search }}" placeholder="Search by player name">
-            </div>
-            <div class="col">
-                <select name="sort_by" class="form-select">
-                    <option value="player__name" {% if request.GET.sort_by == "player__name" %}selected{% endif %}>Player Name</option>
-                    <option value="rarity__name" {% if request.GET.sort_by == "rarity__name" %}selected{% endif %}>Rarity</option>
-                </select>
-            </div>
-            <div class="col">
-                <select name="order" class="form-select">
-                    <option value="asc" {% if request.GET.order == "asc" %}selected{% endif %}>Ascending</option>
-                    <option value="desc" {% if request.GET.order == "desc" %}selected{% endif %}>Descending</option>
-                </select>
-            </div>
-            <div class="col">
-                <button type="submit" class="btn btn-primary">Filter & Sort</button>
-            </div>
-        </div>
-    </form>
-    </div>
+    <div class="form-container mt-0 mb-4">
+		<form method="get" id="search-form">
+			{{ form.as_p }}
+			<button class="btn search-btn" type="submit">Search</button>
+		</form>
+		{% comment %} <button class="btn btn-danger mt-2" type="button" id="reset-filters">Reset Filters</button> {% endcomment %}
+	</div>
 	{% if playercards %}
     <div class="row ">
         {% for playercard in playercards %}
 		<div class="col-md-4 col-lg-3 mb-3">
             {% include "djolowin/playercard/model/playercard.html" %}
+            {% if playercard.for_sale %}
+                <p>For sale</p>
+                {% else %}
+                <p>Not for sale</p>
+            {% endif %}
         </div>
         {% empty %}
         <div class="col-12">

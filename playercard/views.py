@@ -14,6 +14,8 @@ from django.views.generic import DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from auction.models import Auction
+from auction.forms import AuctionForm
+from auction.mixins import AuctionCreationMixin
 from base.models import Player
 from core.mixins import CustomDispatchMixin
 from playercard.models import PlayerCard, CardRarity
@@ -23,6 +25,7 @@ from transaction.utils import create_card_purchase_transaction
 from wallet.models import UserWallet
 
 from .forms import CardForm, PlayerCardSearchForm
+from .mixins import PlayerCardSearchMixin
 from .signals import completed_card_purchase
 
 
@@ -46,7 +49,7 @@ class UpdatePlayerCardView(LoginRequiredMixin, UpdateView):
         return redirect("playercard:playercard-detail", pk=playercard.pk)
 
 
-class PlayerCardDetailView(CustomDispatchMixin, DetailView):
+class PlayerCardDetailView(CustomDispatchMixin, AuctionCreationMixin, DetailView):
     context_object_name = "playercard"
     model = PlayerCard
     view_signal = playercard_viewed
@@ -65,6 +68,7 @@ class PlayerCardDetailView(CustomDispatchMixin, DetailView):
             & Q(end_time__lte=timezone.now()))[:5]
         context["past_auctions"] = past_auctions
         context["past_auctions_count"] = past_auctions.count()
+        context["auction_form"] = AuctionForm()
         context["form"] = CardForm(playercard_instance=self.object)
         context["active_auctions"] = Auction.objects.filter(
             Q(card=self.object)
@@ -74,10 +78,11 @@ class PlayerCardDetailView(CustomDispatchMixin, DetailView):
         return context
 
 
-class PlayerCardListView(CustomDispatchMixin, ListView):
+class PlayerCardListView(CustomDispatchMixin, PlayerCardSearchMixin, ListView):
     """Alternative Playercard Listview"""
 
     model = PlayerCard
+    form_class = PlayerCardSearchForm
     template_name = "djolowin/playercard/all_playercards.html"
     context_object_name = "playercards"
     paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
@@ -86,57 +91,11 @@ class PlayerCardListView(CustomDispatchMixin, ListView):
 
     def get_queryset(self):
         # The method below is to only show playercards that are for sale and that are not from the MasterTeam COllection
+        form = self.form_class(self.request.GET)
         queryset = list_of_cards_to_display()
-        search = self.request.GET.get("search")
-        rarity = self.request.GET.get("rarity")
-        team = self.request.GET.get("team")
-        position = self.request.GET.get("position")
-        print(search, rarity, team, position)
-
-        query = Q()
-        if search:
-            query &= Q(player__name__icontains=search)
-        if rarity:
-            query &= Q(rarity__name=rarity)
-        if team:
-            query &= Q(player__team__id=team)
-        if position:
-            query &= Q(player__position=position)
-
-        sort_by = self.request.GET.get("sort_by")
-        order = self.request.GET.get("order")
-        queryset = queryset.filter(query)
-
-        if sort_by:
-            if order == "desc":
-                sort_by = f"-{sort_by}"
-            queryset = queryset.filter(query).order_by(sort_by)
-        if rarity:
-            queryset = queryset.filter(rarity__name=rarity)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["rarity_choices"] = self.RARITY_CHOICES
-        context["position_choices"] = self.POSITION_CHOICES
-        return context
-
-
-class UserPlayerCardListView(CustomDispatchMixin, ListView):
-    model = PlayerCard
-    context_object_name = "playercards"
-    template_name = "djolowin/playercard/owned_playercard_list.html"
-    paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
-
-    def get_queryset(self):
-        user = self.request.user
-        queryset = self.model.objects.filter(owner=user)
-
-        rarity = self.request.GET.get("rarity")
-        search = self.request.GET.get("search")
-        if search:
-            queryset = queryset.filter(player__name__icontains=search)
-
+        if form.is_valid():
+            queryset = self.filter_playercards(queryset)
+        
         sort_by = self.request.GET.get("sort_by")
         order = self.request.GET.get("order")
 
@@ -144,10 +103,44 @@ class UserPlayerCardListView(CustomDispatchMixin, ListView):
             if order == "desc":
                 sort_by = f"-{sort_by}"
             queryset = queryset.order_by(sort_by)
-        if rarity:
-            queryset = queryset.filter(rarity__name=rarity)
-            
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = PlayerCardSearchForm(self.request.GET)
+        context["rarity_choices"] = self.RARITY_CHOICES
+        context["position_choices"] = self.POSITION_CHOICES
+        return context
+
+
+class UserPlayerCardListView(CustomDispatchMixin, PlayerCardSearchMixin, ListView):
+    model = PlayerCard
+    form_class = PlayerCardSearchForm
+    context_object_name = "playercards"
+    template_name = "djolowin/playercard/owned_playercard_list.html"
+    paginate_by = settings.DJOLOWIN_PLAYERCARD_PAGINATE_BY
+
+    def get_queryset(self):
+        form = self.form_class(self.request.GET)
+        user = self.request.user
+        queryset = self.model.objects.filter(owner=user)
+
+        if form.is_valid():
+            queryset = self.filter_playercards(queryset)
+        
+        sort_by = self.request.GET.get("sort_by")
+        order = self.request.GET.get("order")
+
+        if sort_by:
+            if order == "desc":
+                sort_by = f"-{sort_by}"
+            queryset = queryset.order_by(sort_by)
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = PlayerCardSearchForm(self.request.GET)
+        return context
 
         
 
@@ -178,7 +171,7 @@ def purchase_playercard(request, pk):
     user = request.user
     user_wallet = UserWallet.objects.get(user=user)
 
-    if user_wallet.balance >= playercard.price:
+    if user_wallet.available_balance >= playercard.price:
         user_wallet.balance -= playercard.price
         user_wallet.save()
         playercard.owner = request.user

@@ -14,9 +14,11 @@ def handle_auction_end(auction):
     highest_bid = auction.get_highest_bid()
     if highest_bid:
         auction.card.owner = highest_bid.bidder
+        auction.sold = True
         auction.card.save()
     else:
         auction.card.owner = auction.owner
+        auction.sold = False
         auction.card.save()
 
 

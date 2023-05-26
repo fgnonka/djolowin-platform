@@ -1,43 +1,56 @@
-{% if is_paginated %}
-    {% if page_obj.has_other_pages %}
-        <nav aria-label="Card collection pagination">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Previous</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">First</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                {% endif %}
-                {% for i in paginator.page_range %}
-                    {% if i >= page_obj.number|add:"-3" and i <= page_obj.number|add:"3" %}
-                        {% if page_obj.number == i %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ i }}</span>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ i }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">{{ i }}</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}">Last</a>
-                    </li>
-                {% else %}
+{% if is_paginated %} {% if page_obj.has_other_pages %}
+<nav aria-label="Card collection pagination">
+	<ul class="pagination">
+		{% if page_obj.has_previous %}
+		<li class="page-item">
+			<a
+				class="page-link"
+				href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %} {% if request.GET.card_name %}&card_name={{ request.GET.card_name }}{% endif %} {% if request.GET.team_name %}&team_name={{ request.GET.team_name }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}{% if request.GET.ending_soon %}&ending_soon={{ request.GET.ending_soon }}{% endif %} {% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}"
+				>First</a
+			>
+		</li>
+		<li class="page-item">
+			<a
+				class="page-link"
+				href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %} {% if request.GET.card_name %}&card_name={{ request.GET.card_name }}{% endif %} {% if request.GET.team_name %}&team_name={{ request.GET.team_name }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}{% if request.GET.ending_soon %}&ending_soon={{ request.GET.ending_soon }}{% endif %} {% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}"
+				>Previous</a
+			>
+		</li>
+		{% else %}
+		<li class="page-item disabled">
+			<span class="page-link">First</span>
+		</li>
+		<li class="page-item disabled">
+			<span class="page-link">Previous</span>
+		</li>
+		{% endif %} {% for i in paginator.page_range %} {% if i >= page_obj.number|add:"-3" and i <= page_obj.number|add:"3" %} {% if page_obj.number == i %}
+		<li class="page-item active">
+			<span class="page-link">{{ i }}</span>
+		</li>
+		{% else %}
+		<li class="page-item">
+			<a
+				class="page-link"
+				href="?page={{ i }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.card_name %}&card_name={{ request.GET.card_name }}{% endif %}{% if request.GET.team_name %}&team_name={{ request.GET.team_name }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %} {% if request.GET.ending_soon %}&ending_soon={{ request.GET.ending_soon }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}"
+				>{{ i }}</a
+			>
+		</li>
+		{% endif %} {% endif %} {% endfor %} {% if page_obj.has_next %}
+		<li class="page-item">
+			<a
+				class="page-link"
+				href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.card_name %}&card_name={{ request.GET.card_name }}{% endif %}{% if request.GET.team_name %}&team_name={{ request.GET.team_name }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}{% if request.GET.ending_soon %}&ending_soon={{ request.GET.ending_soon }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}"
+				>Next</a
+			>
+		</li>
+		<li class="page-item">
+			<a
+				class="page-link"
+				href="?page={{ paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.rarity %}&rarity={{ request.GET.rarity }}{% endif %}{% if request.GET.position %}&position={{ request.GET.position }}{% endif %}{% if request.GET.card_name %}&card_name={{ request.GET.card_name }}{% endif %}{% if request.GET.team_name %}&team_name={{ request.GET.team_name }}{% endif %}{% if request.GET.price_max %}&price_max={{ request.GET.price_max }}{% endif %}{% if request.GET.ending_soon %}&ending_soon={{ request.GET.ending_soon }}{% endif %}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.order %}&order={{ request.GET.order }}{% endif %}"
+				>Last</a
+			>
+		</li>
+		{% else %}
 		<li class="page-item disabled">
 			<span class="page-link">Next</span>
 		</li>

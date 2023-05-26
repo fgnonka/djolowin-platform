@@ -1,0 +1,45 @@
+<div class="col-md-4 col-lg-3 mb-4">
+    <a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
+        <h6 class="accentext">View this auction</h6>
+    </a>
+    {% if user.is_authenticated and request.user != auction.owner %}
+    <form method="post" action="{% url 'auction:toggle_watcher' auction.pk %}">
+        {% csrf_token %}
+        <input
+            class="btn btn-outline-light"
+            type="submit"
+            value="{% if user in auction.watchers.all %}Unsubscribe{% else %}Subscribe{% endif %}" />
+    </form>
+    {% else %}
+    <button class="btn btn-light" disabled>Suscribed by default</button>
+    {% endif %} {% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %}
+    <div class="white-text">
+        <h5>Owner: {{ auction.owner.username }}</h5>
+        {% if auction.get_highest_bid.amount %}
+        <h6>Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA</h6>
+        {% else %}
+        <h6>Starting Price: {{ auction.starting_price }} DJOBA</h6>
+        {% endif %}
+        <div id="countdown">
+            <h6>Expires on: {{ auction.end_time }}</h6>
+        </div>
+        <div class="modal-div">
+        {% if request.user == auction.highest_bidder %}
+        <p class="text-success">You are the highest bidder on this auction.</p>
+        {% elif request.user == auction.owner %}
+        <p class="text-success">This is your auction.</p>
+        {% else %}
+        <button
+            type="button"
+            class="btn search-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#auctionBidModal-{{ auction.id }}">
+            Place a bid
+        </button>
+        {% endif %}
+        <!-- Modal -->
+        {% include "djolowin/auction/modal_form/auction_bid_modal.html" %}
+        </div>
+    </div>
+</div>
+</div>

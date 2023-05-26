@@ -153,7 +153,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """ Human-readable representation that overrides the default one that
         returns the username field."""
-        return str(self.uuid)
+        return str(self.get_full_name)
     
     def save(self, *args, **kwargs):
         self.search_document = self.get_search_document()

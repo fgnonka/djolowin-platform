@@ -1,0 +1,74 @@
+{% extends "djolowin/main.html" %} {% block content %}
+<main>
+	<div clas="container">
+		<h1>{{ request.user.get_fullname }}</h1>
+
+		<h2>My Active Auctions</h2>
+		<div class="form-container mt-0 mb-4">
+			<form method="get">
+				{{ form.as_p }}
+				<button class="btn search-btn" type="submit">Search</button>
+			</form>
+		</div>
+		<div class="row" id="auctions">
+			{% for auction in auctions %}
+			<div class="col-md-4 col-lg-3 mb-4">
+				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} {% if auction.get_highest_bid.amount %}
+				<h4>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
+				{% else %}
+				<h4>Starting Price: {{ auction.starting_price }} DJOBA</h4>
+				{% endif %}
+				<h4>Expires on: {{ auction.end_time }}</h4>
+				<a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
+					<h5 class="accentext">View this auction</h5>
+				</a>
+			</div>
+			{% empty %}
+			<div class="col-12">
+				<p>No Active auctions found at the moment. Please come back again later</p>
+			</div>
+		</div>
+		{% endfor %}
+		<div class="row">
+			<h2>My most recent Auctions</h2>
+			{% for auction in past_auctions %}
+			<div class="col-md-4 col-lg-3 mb-4">
+				<h5 class="white-text">Owner: {{ auction.owner.username }}</h5>
+				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} 
+				{% if auction.get_highest_bid.amount %}
+					<h4>This auction was sold for: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
+				{% else %}
+					<h5>Unfortunately, there was no bidder on this auction.</h5>
+				{% endif %}
+				<h6>This auction lasted {{ auction.duration }} hours</h6>
+				<h6>Expired on: {{ auction.end_time }}</h6>
+				<a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
+					<h5 class="accentext">View this auction</h5>
+				</a>
+			</div>
+			{% empty %}
+			<div class="col-12">
+				<p>You have not created any auction in the past.</p>
+			</div>
+		</div>
+		{% endfor %} {% include "djolowin/pagination.html" %}
+	</div>
+</main>
+<script>
+	function search() {
+		var name = document.getElementById("name").value;
+		var team = document.getElementById("team").value;
+		var rarity = document.getElementById("rarity").value;
+		var end_time = document.getElementById("end_time").value;
+
+		var url = "/auctions/list?name=" + name + "&team=" + team + "&rarity=" + rarity + "&end_time=" + end_time;
+
+		$.ajax({
+			url: url,
+			success: function (data) {
+				$("#auctions").html(data);
+			},
+		});
+	}
+</script>
+{% endblock %}

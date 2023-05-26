@@ -1,0 +1,35 @@
+{% load static %}
+<div
+	class="modal fade"
+	id="auctionBidModal-{{ auction.id }}"
+	tabindex="-1"
+	aria-labelledby="auctionBidModalLabel-{{ auction.id }}"
+	aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content bg-dark text-white-50">
+			<div class="modal-header">
+				<h5 class="modal-title" id="auctionBidModalLabel-{{ auction.id }}">Place a bid on this auction: {{auction}}</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				{% if auction.get_highest_bid %}
+				<h4>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
+				{% else %}
+				<h4>Starting Price: {{ auction.starting_price }} DJOBA</h4>
+				{% endif %}
+				{% if request.user == auction.highest_bidder %}	
+				<p>You are the highest bidder on this auction.</p>
+				{% else %}
+				<form method="post" action="{% url 'auction:auction_detail' auction.pk %}">
+					{% csrf_token %} {{ bid_form.as_p }}
+					<input type="submit" value="Place Bid" />
+				</form>
+				{% endif %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel Bid</button>
+			</div>
+		</div>
+	</div>
+</div>
+

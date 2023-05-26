@@ -1,10 +1,12 @@
 from django.shortcuts import redirect
+from django.contrib import messages
 from django.conf import settings
 
 class CustomDispatchMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect(settings.LOGIN_REDIRECT_URL)
+            messages.error(request, "Please log in to view this page.")
+            return redirect(settings.LOGOUT_REDIRECT_URL)
         return super(CustomDispatchMixin, self).dispatch(request, *args, **kwargs)
 
 

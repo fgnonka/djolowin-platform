@@ -6,7 +6,7 @@
 	background-image: url("../../staticfiles/card-outline-templates/common-card-template.png ");
 	background-size: cover;
 	background-position: 90% 100%;
-	width: 16rem;
+	width: 15rem;
 	border: 2px solid #ffffff;
 	box-shadow: 0 0 10px #77f5f1;
 }

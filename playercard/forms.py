@@ -8,7 +8,7 @@ from base.models import Team, Player
 class CardForm(forms.ModelForm):
     price = forms.DecimalField(decimal_places=2, max_digits=10)
     for_sale = forms.BooleanField(required=False)
-    is_public = forms.BooleanField(required=False)
+    is_public = forms.BooleanField(required=False, label="Make my card public")
 
     class Meta:
         model = PlayerCard
@@ -24,50 +24,23 @@ class CardForm(forms.ModelForm):
             self.fields["is_public"].initial = self.playercard_instance.is_public
 
 
-RARITY_CHOICES = [(rarity.name, rarity.name) for rarity in CardRarity.objects.all()]
 TEAM_CHOICES = [(int(team.id), team) for team in Team.objects.all()]
 POSITION_CHOICES = [(position) for position in Player.POSITION_CHOICES]
 
 
-RARITY_CHOICES = (
-    ('common', 'Common'),
-    ('limited', 'Limited'),
-    ('rare', 'Rare'),
-    ('super_rare', 'Super Rare'),
-    ('unique', 'Unique'),
-)
-
-
-class CardFilterForm(forms.Form):
-    common = forms.BooleanField(required=False)
-    rare = forms.BooleanField(required=False)
-    super_rare = forms.BooleanField(required=False)
-    legendary = forms.BooleanField(required=False)
-    unique = forms.BooleanField(required=False)
-
 
 class PlayerCardSearchForm(forms.Form):
-    name = forms.CharField(
-        required=False,
-        label="Player Name",
-        widget=forms.TextInput(attrs={"placeholder": "Player name"}),
-    )
-    rarity = forms.ChoiceField(
-        required=False,
-        choices=RARITY_CHOICES,
-        label="Rarity",
-        widget=forms.Select(attrs={"class": "custom-select"}),
-    )
-    team = forms.MultipleChoiceField(
-        required=False,
-        choices=TEAM_CHOICES,
-        label="Team",
-        widget=forms.CheckboxSelectMultiple(),
-    )
-    position = forms.MultipleChoiceField(
-        required=False,
-        choices=POSITION_CHOICES,
-        label="Position",
-        widget=forms.CheckboxSelectMultiple(),
-    )
+    
+    RARITY_CHOICES = [(rarity.name, rarity.name) for rarity in CardRarity.objects.all()]
 
+    card_name = forms.CharField(required=False, label="Card name")
+    team_name = forms.ChoiceField(required=False, label="Team name", choices=[(None, "Any Team")] + TEAM_CHOICES)
+    position = forms.ChoiceField(required=False, label="Position", choices=[(None, "Any Position")] + POSITION_CHOICES)
+    rarity = forms.ChoiceField(required=False, label="Rarity", choices=[(None, "Any rarity")] + RARITY_CHOICES)
+    price_max = forms.IntegerField(min_value=0, required=False, label="Maximum price")
+
+    class Meta:
+        fields = ["card_name", "team_name", "position", "rarity", "price_max"]
+        widgets = {
+            "price_max": forms.NumberInput(attrs={"step": "5000.00", "min": "0.00"}),
+        }

@@ -5,12 +5,12 @@
         <div class="form-group mr-2">
             <label for="rarity-filter">Filter by Rarity:</label>
             <select id="rarity-filter" name="rarity" class="form-control">
-              <option value="">All Rarities</option>
-              <option value="Common" {% if request.GET.rarity == 'common' %}selected{% endif %}>Common</option>
-              <option value="Limited" {% if request.GET.rarity == 'limited' %}selected{% endif %}>Limited</option>
-              <option value="Rare" {% if request.GET.rarity == 'rare' %}selected{% endif %}>Rare</option>
-              <option value="Super Rare" {% if request.GET.rarity == 'epic' %}selected{% endif %}>Super Rare</option>
-              <option value="Unique" {% if request.GET.rarity == 'legendary' %}selected{% endif %}>Unique</option>
+              <input type= "checkbox" value="">All Rarities</input>
+              <input type= "checkbox" value="Common" {% if request.GET.rarity == 'common' %}selected{% endif %}>Common</input >
+              <input type= "checkbox" value="Limited" {% if request.GET.rarity == 'limited' %}selected{% endif %}>Limited</input>
+              <input type= "checkbox" value="Rare" {% if request.GET.rarity == 'rare' %}selected{% endif %}>Rare</input>
+              <input type= "checkbox" value="Super Rare" {% if request.GET.rarity == 'epic' %}selected{% endif %}>Super Rare</input>
+              <input type= "checkbox" value="Unique" {% if request.GET.rarity == 'legendary' %}selected{% endif %}>Unique</input>
             </select>
         </div>
         {% if request.GET.rarity %}

@@ -29,9 +29,12 @@ def increase_number_of_bids(auction):
 
 
 def has_existing_active_auction(card, owner):
-        existing_active_auction = Auction.objects.filter(
-            Q(card=card) & Q(owner=owner) & Q(end_time__gte=timezone.now())
-        )
-        if existing_active_auction:
-            return True
-        return False
+    """ Check if the user has an active auction for the card."""
+    existing_active_auction = Auction.objects.filter(
+        Q(card=card) & Q(owner=owner) & Q(auction_ended=False) 
+    )
+    if existing_active_auction:
+        #if the user has an active auction for the card
+        return True
+    return False
+    
