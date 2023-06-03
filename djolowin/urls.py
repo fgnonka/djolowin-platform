@@ -17,6 +17,7 @@ urlpatterns = [
     path("playercard/", include("playercard.urls", namespace="playercard")),
     path("transaction/", include("transaction.urls", namespace="transaction")),
     path("wallet/", include("wallet.urls", namespace="wallet")),
+    path("social-auth/", include("social_django.urls", namespace="social")),
 ]
 
 if settings.DEBUG:
