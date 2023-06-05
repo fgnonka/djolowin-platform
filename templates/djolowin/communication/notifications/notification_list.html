@@ -2,21 +2,23 @@
 <div class="container mt-5">
 	<div class="row">
 		<div class="col-md-12">
-			<h1>Notification Center</h1>
+			<h1 class="text-white">Notification Center</h1>
 			{% if notifications %}
 			<div class="list-group mt-4">
 				{% for notification in notifications %}
-				<a href={% url 'communication:notification-detail' notification.id  %} class="list-group-item list-group-item-info">
+				<a href={% url 'communication:notification-detail' notification.id  %} class="list-group-item">
 					<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{ notification.subject }}</h5>
 						<small>{{ notification.date_read|date:"M d, Y h:i A" }}</small>
 					</div>
 					<h6 class="mb-1">{{ notification.body }}</h6>
-            {% if notification.date_read %}
-            <span class="badge badge-secondary">Read</span>
-            {% else %}
-            <span class="badge badge-primary">Unread</span>
-            {% endif %}
+					<span class="badge text-black-50">
+						{% if notification.date_read %}
+						Read
+						{% else %}
+						Unread
+						{% endif %}
+					</span>
 				</a>
 				{% endfor %}
 			</div>

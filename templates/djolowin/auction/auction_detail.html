@@ -1,4 +1,7 @@
-{% extends "djolowin/main.html" %} {% block content %} {% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} {% if auction.current_bid %}
+{% extends "djolowin/main.html" %} {% block content %} 
+<h3>Auction {{ auction.id }}</h3>
+<p id="message"></p>
+{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} {% if auction.current_bid %}
 <p>Highest bidder: {{ auction.highest_bidder.username }}</p>
 <p>Current Bid: {{ auction.current_bid }}</p>
 {% else %}
@@ -7,10 +10,9 @@
 <p>End time: {{ auction.end_time }}</p>
 
 {% if user.is_authenticated and request.user != auction.owner %}
-<form method="post" action="{% url 'auction:toggle_watcher' auction.pk %}">
-	{% csrf_token %}
-	<input type="submit" value="{% if user in auction.watchers.all %}Unsubscribe{% else %}Subscribe{% endif %}" />
-</form>
+<div class="my-3">
+{% include "djolowin/auction/component/toggle_watcher.html" %}
+</div>
 <div class="modal-div">
 	{% if request.user == auction.highest_bidder %}
 	<p class="text-success">You are the highest bidder on this auction.</p>

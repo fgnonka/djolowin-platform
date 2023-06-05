@@ -63,7 +63,7 @@ class BidFormMixin(SingleObjectMixin):
                 # Notify the owner of the auction
                 send_notification(
                     recipient=auction.owner,
-                    subject="New bid on {}".format(auction),
+                    subject=f"New bid on auction #{auction.id}: {auction.card.name} - {auction.card.rarity}",
                     message="{} has placed a bid of {} DJOBA on your auction for {}.".format(
                         bidder, bid_amount, auction
                     ),
@@ -72,7 +72,7 @@ class BidFormMixin(SingleObjectMixin):
                 if previous_bid and previous_bidder != bidder:
                     send_notification(
                         recipient=previous_bidder,
-                        subject="Bid on {} has been outbid".format(auction),
+                        subject=f"You have been outbid!! Auction #{auction.id}: {auction.card.name} - {auction.card.rarity} ",
                         message="Your bid of {} DJOBA on {} has been outbid by {}.".format(
                             previous_bid.amount, auction, bidder
                         ),
@@ -86,7 +86,7 @@ class BidFormMixin(SingleObjectMixin):
                 for watcher in watchers:
                     send_notification(
                         recipient=watcher,
-                        subject="New bid on {}".format(auction),
+                        subject=f"New bid on auction #{auction.id}: {auction.card.name} - {auction.card.rarity}",
                         message="{} has placed a bid of {} on {}.".format(
                             bidder, bid_amount, auction
                         ),
@@ -123,7 +123,10 @@ class AuctionSearchMixin:
             auctions = auctions.filter(
                 card__rarity__name=self.request.GET.get("rarity")
             )
-
+        if self.request.GET.get("position"):
+            auctions = auctions.filter(
+                card__player__position=self.request.GET.get("position")
+            )
         if self.request.GET.get("card_name"):
             auctions = auctions.filter(
                 card__player__name__icontains=self.request.GET.get("card_name")

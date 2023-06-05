@@ -9,7 +9,7 @@ urlpatterns = [
     path("<int:pk>/", views.AuctionDetailView.as_view(), name="auction_detail"),
     path("owned/", views.UserAuctionView.as_view(), name="owned_auctions"),
     path(
-        "<int:auction_pk>/toggle_watcher/",
+        "toggle_watcher/",
         views.toggle_watch,
         name="toggle_watcher",
     ),

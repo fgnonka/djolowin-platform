@@ -1,0 +1,60 @@
+{% if user.is_authenticated and request.user != auction.owner %}
+<a
+	class="suscribebutton text-decoration-none text-white"
+	id="suscribe{{ auction.id }}"
+	href="#"
+	data-catid="{{auction.id}}">
+	{% if user in auction.watchers.all %}
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="30"
+		height="30"
+		fill="red"
+		class="bi bi-person-dash-fill"
+		viewBox="0 0 16 16">
+		<path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z" />
+		<path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+	</svg>
+	Remove from watchlist {% else %}
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="30"
+		height="30"
+		fill="green"
+		class="bi bi-person-fill-add"
+		viewBox="0 0 16 16">
+		<path
+			d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+		<path
+			d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
+	</svg>
+	Add to watchlist {% endif %}
+</a>
+{% else %}
+<button class="btn btn-light" disabled>Suscribed by default</button>
+{% endif %}
+<script>
+	$('.suscribebutton').click(function(){
+	    var catid;
+	    catid = $(this).attr("data-catid");
+	    $.ajax(
+	    {
+	        type:"GET",
+	        url: '{% url 'auction:toggle_watcher' %}', //
+	        data:{
+	                auction_id: catid
+	        },
+	        success: function(data) {
+            if (data === "added") {
+                $(this).find('svg').attr('fill', 'green');
+                $(this).text('Remove from watchlist');
+				location.reload()
+            } else {
+                $(this).find('svg').attr('fill', 'red');
+                $(this).text('Add to watchlist');
+				location.reload()
+            }
+        }
+	    }) 
+	});
+</script>

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
@@ -118,14 +119,16 @@ class AuctionDetailView(LoginRequiredMixin, DetailView, BidFormMixin):
 
 
 @login_required
-def toggle_watch(request, auction_pk):
-    auction = get_object_or_404(Auction, pk=auction_pk)
-    if request.user in auction.watchers.all():
-        remove_watcher(request.user, auction)
-    else:
-        add_watcher(request.user, auction)
+def toggle_watch(request):
+    if request.method == "GET":
+        auction = get_object_or_404(Auction, pk=request.GET.get("auction_id", None))
+        if request.user in auction.watchers.all():
+            remove_watcher(request.user, auction)
+            return HttpResponse("removed") # Sending an success response
+        else:
+            add_watcher(request.user, auction)
+            return HttpResponse("added") # Sending an success response
     auction.save()
-    return redirect("auction:auction_detail", pk=auction.pk)
 
 
 class UserAuctionView(LoginRequiredMixin, AuctionSearchMixin, ListView):

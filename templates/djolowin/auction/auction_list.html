@@ -13,6 +13,15 @@
 		</div>
 		<hr />
 		<div class="row">
+			<h2>All Active Auctions</h2>
+			{% for auction in auctions %} {% include "djolowin/auction/component/auction.html" %} {% empty %}
+			<div class="col-12">
+				<p>No Active auctions found at the moment. Please come back again later</p>
+			</div>
+			{% endfor %}
+		</div>
+		<hr style="color: white" />
+		<div class="row">
 			<h2>Auctions you are watching</h2>
 			{% for auction in watched_auctions %} {% include "djolowin/auction/component/auction.html" %} {% empty %}
 			<div class="col-12">
@@ -20,16 +29,6 @@
 			</div>
 			{% endfor %}
 		</div>
-		<hr style="color: white" />
-		<div class="row">
-			<h2>All Active Auctions</h2>
-			{% for auction in auctions %} {% include "djolowin/auction/component/auction.html" %} {% empty %}
-			<div class="col-12">
-				<p>No Active auctions found at the moment. Please come back again later</p>
-			</div>
-		</div>
-
-		{% endfor %}
 	</div>
 	{% include "djolowin/pagination.html" %}
 </main>

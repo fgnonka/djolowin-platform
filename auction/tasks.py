@@ -29,8 +29,8 @@ def check_auction_end():
             for user in auction.watchers.all():
                 send_notification(
                     recipient=user,
-                    subject=f"Auction of {auction.card} has ended!",
-                    message=f"The auction for {auction.card} has ended.",
+                    subject=f"The {auction.rarity} auction of {auction.card.player.name} {auction.card.index} has ended!",
+                    message=f"The auction for {auction.card.player.name} has ended.",
                 )
 
 
@@ -45,4 +45,8 @@ def check_auction_ending_soon():
                 {"auction": auction, "card": card},
             )
             for user in auction.watchers.all():
-                send_notification(recipient=user, subject=f"Auction of {auction.card} ending soon!", message=message)
+                send_notification(
+                    recipient=user,
+                    subject=f"The {auction.rarity} auction of {auction.card.player.name} {auction.card.index} is ending soon!",
+                    message=message,
+                )

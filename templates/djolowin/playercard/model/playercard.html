@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="card rounded card-template hover14 border-secondary m-3"
+<div class="card rounded card-template hover14 border-secondary m-4"
         {% if playercard.rarity.name == 'Common' %}
         style="background-image: url({% static 'card-outline-templates/common-card-template.jpeg' %});"
         {% elif playercard.rarity.name == 'Rare' %}
@@ -38,9 +38,9 @@
         {% elif playercard.rarity.name == 'Common' or playercard.rarity.name == 'Limited' %}
         <img src="{% static 'images/soccer_figure-removebg.png' %}" alt="exposed brick wall in a hipster cafe" class="img-fluid" />
         {% endif %} 
-        <div class="card-footer border-0 bg-transparent mt-5">
-            <h6 class="card-text mb-4">
-                <a class="player-name text-decoration-none white-text" style="word-wrap: break-word;" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name | upper}}</a>
+        <div class="border-0 bg-transparent mt-3">
+            <h6 class="card-text justify-content-center mb-4">
+                <a class="player-name text-decoration-none white-text" style="word-wrap: break-word; font-size:15px;" href="{{ playercard.get_absolute_url }}">{{ playercard.player.name | upper}}</a>
             </h6>
             <span class="badge white-text"
             >{{playercard.player.get_player_position_verbose}}

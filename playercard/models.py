@@ -33,7 +33,8 @@ class PlayerCard(models.Model):
 
     
     for_sale = models.BooleanField(default=True)
-    edition = models.IntegerField(default=2024)
+    season = models.IntegerField(default=2024)
+    edition = models.CharField(max_length=255, default="AFCON LEGENDS")
     is_public = models.BooleanField(
         _("Is public"),
         default=True,

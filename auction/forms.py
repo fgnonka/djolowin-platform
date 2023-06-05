@@ -1,13 +1,8 @@
-from datetime import timedelta
-
-
 from django import forms
-from django.forms.widgets import DateTimeInput
-from django.utils import timezone
 
+from base.models import Player
 from playercard.models import CardRarity
 from .models import Auction, Bid
-from wallet.models import UserWallet
 
 
 class AuctionForm(forms.ModelForm):
@@ -58,8 +53,10 @@ class BidForm(forms.ModelForm):
 
 class AuctionSearchForm(forms.Form):
     RARITY_CHOICES = [ (rarity.name, rarity.name) for rarity in CardRarity.objects.all() ]
+    POSITION_CHOICES = [ (position) for position in Player.POSITION_CHOICES ]
     
     card_name = forms.CharField(required=False, label="Card name")
     team_name = forms.CharField(required=False, label="Team name")
+    position = forms.ChoiceField(required=False, label="Position", choices=[(None, "Any position")] + POSITION_CHOICES)
     rarity = forms.ChoiceField(required=False, label="Rarity", choices=[(None, "Any rarity")] + RARITY_CHOICES)
     ending_soon = forms.BooleanField(required=False, label="Ending soon")

@@ -1,8 +1,7 @@
 {% block content %}
     {{ notification.subject }}
     {{ notification.body }}
-    The auction for the following player card is about to end:
-        {{ card.player.name }} ({{ card.rarity }}).
-    
+    The auction for the following player card is about to end in the next hour:
+        {{ card.player.name }} {{card.index}} ({{ card.rarity }}).
     Place your final bids before it's too late!
 {% endblock %}

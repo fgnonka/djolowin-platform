@@ -38,7 +38,8 @@ class PlayerCardSearchForm(forms.Form):
     position = forms.ChoiceField(required=False, label="Position", choices=[(None, "Any Position")] + POSITION_CHOICES)
     rarity = forms.ChoiceField(required=False, label="Rarity", choices=[(None, "Any rarity")] + RARITY_CHOICES)
     price_max = forms.IntegerField(min_value=0, required=False, label="Maximum price")
-
+    serial_number = forms.IntegerField(min_value=0, required=False, label="Serial number")
+    
     class Meta:
         fields = ["card_name", "team_name", "position", "rarity", "price_max"]
         widgets = {

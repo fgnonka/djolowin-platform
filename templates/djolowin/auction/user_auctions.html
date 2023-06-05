@@ -1,4 +1,6 @@
-{% extends "djolowin/main.html" %} {% block content %}
+{% extends "djolowin/main.html" %}
+{% load humanize %}
+{% block content %} 
 <main>
 	<div clas="container">
 		<h1>{{ request.user.get_fullname }}</h1>
@@ -36,7 +38,7 @@
 				<h5 class="white-text">Owner: {{ auction.owner.username }}</h5>
 				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} 
 				{% if auction.get_highest_bid.amount %}
-					<h4>This auction was sold for: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
+					<h4>This auction was sold to ({{ auction.highest_bidder.username }}) for {{ auction.get_highest_bid.amount|floatformat:"0"|intcomma }} DJOBA </h4>
 				{% else %}
 					<h5>Unfortunately, there was no bidder on this auction.</h5>
 				{% endif %}
