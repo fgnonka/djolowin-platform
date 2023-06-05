@@ -1,0 +1,36 @@
+{% extends "djolowin/main.html" %} {% load static %} {% block content %}
+
+<main>
+	<div class="container-lg" >
+		<h1 class="text-white">Welcome <strong>{{ user.username }}</strong></h1>
+		{% comment %} {% include "djolowin/base/search_form.html" %} {% endcomment %}
+		<div class="">
+			<h4 class="text-white">Featured cards on sale</h4>
+		</div>
+		<div class="section">
+			<a class="text-decoration-none" href="{% url 'playercard:playercard-list' %}">
+				<h5 class="lightext">See all the cards on sale</h5>
+			</a>
+		</div>
+		<div class="row">
+			{% for playercard in playercards %}
+			<div class="col-12 col-sm-6 col-md-4 col-lg-3">
+				{% include "djolowin/playercard/model/playercard.html" %}
+				<div class="card-footer m-0">
+					<button type="button" class="btn search-btn" data-bs-toggle="modal" data-bs-target="#purchaseCardModal-{{ playercard.id }}">
+					Purchase for {{ playercard.price }} DJOBA
+					</button>
+					<!-- Modal -->
+					{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}
+				</div>
+			</div>
+			{% empty %}
+			<div class="col-12">
+				<p>No cards found in your collection. Try adjusting your filters or search.</p>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</main>
+
+{% endblock content %}
