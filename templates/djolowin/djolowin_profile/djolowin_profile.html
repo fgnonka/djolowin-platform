@@ -1,0 +1,254 @@
+{% extends 'djolowin/main.html' %} {% load static %} {% load humanize %} {% block content %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-2 col-sm" style="border: solid 2px">
+			<div class="list-group" id="profileList" role="tablist">
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark active"
+					data-bs-toggle="list"
+					href="#latest"
+					role="tab"
+					>Latest Activity</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#auctions"
+					role="tab"
+					>My Active Auctions</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#bids"
+					role="tab"
+					>My Bids</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#card-purchases"
+					role="tab"
+					>Past Card Purchases</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#bundle-purchases"
+					role="tab"
+					>Past Bundle Purchases</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#card-sales"
+					role="tab"
+					>Past Card Sales</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#rewards"
+					role="tab"
+					>My Rewards</a
+				>
+				<a
+					class="list-group-item list-group-item-action list-group-item-dark"
+					data-bs-toggle="list"
+					href="#transactions"
+					role="tab"
+					>Past Transactions</a
+				>
+			</div>
+		</div>
+		<div class="col-10 col-md">
+			<div class="tab-content text-white">
+				<div class="tab-pane fade show active" id="latest" role="tabpanel">
+					<h1>Latest Activity</h1>
+					{% for activity in latest_activity %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ activity.timestamp }}</span>
+							<h5 class="card-title">{{ activity }}</h5>
+							<a href="{{ activity.get_absolute_url }}" class="btn btn-outline-light">View</a>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				<div class="tab-pane fade" id="auctions" role="tabpanel">
+					<h1>My Active Auctions</h1>
+					{% if my_active_auctions %} {% for auction in my_active_auctions %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ auction.timestamp }}</span>
+							<h4 class="card-title">
+								{{ auction.card }}
+							</h4>
+							<span class="badge bg-lightext text-dark">Auction ends on {{ auction.end_time }}</span>
+							<br />
+							{% if auction.current_bid %}
+							<span class="badge bg-success text-dark">Current Bid: {{ auction.current_bid }} DJOBA</span>
+							{% else %}
+							<span class="badge bg-danger text-dark">No bids yet</span>
+							{% endif %}
+							<br />
+							<a href="{{ auction.get_absolute_url }}" class="btn btn-outline-light mt-2">View Auction</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h4 class="card-title">You have no active auctions</h4>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="tab-pane fade" id="bids" role="tabpanel">
+					<h1>My Bids</h1>
+					{% if my_bids %} {% for bid in my_bids %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ bid.timestamp }}</span>
+							<h4 class="card-title">
+								Auction: {{ bid.auction.card }}
+							</h4>
+							<span class="badge bg-secondary text-dark">Bid: {{ bid.amount|floatformat:"0"|intcomma }} DJOBA</span>							
+							<br />
+							{% if bid.auction.auction_ended == True %}
+								<span class="badge bg-secondary text-dark">Auction has ended</span>
+								{% if bid.auction.highest_bidder == request.user %}
+								<span class="badge bg-success text-white">You won the auction</span>
+								{% else %}
+								<span class="badge bg-danger text-white">You did not win the auction</span>
+								{% endif %}
+							{% else %}
+								<span class="badge bg-success text-white">Auction is still active</span>
+								{% if bid.auction.get_highest_bid == bid %}
+								<span class="badge bg-success text-white">You are the highest bidder</span>
+								{% else %}
+								<span class="badge bg-danger text-white">You are no longer the highest bidder</span>
+								{% endif %}
+							{% endif %}
+							<br />
+							<a href="{{ bid.get_absolute_url }}" class="btn btn-outline-light mt-2">View Auction</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h5 class="card-title">You have not placed any bid on the platform</h5>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="tab-pane fade" id="card-purchases" role="tabpanel">
+					<h1>Past Card Purchases</h1>
+					{% if my_card_purchases %} {% for purchase in my_card_purchases %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ purchase.timestamp }}</span>
+							<h4 class="card-title">{{ purchase.card }}</h4>
+							<span class="badge bg-success text-white"
+								>Price: {{ purchase.card.price|floatformat:"0"|intcomma }} DJOBA
+							</span>
+							{% if purchase.seller %}
+							<span class="badge bg-lightext text-white">Sold by {{purchase.seller.username}}</span>
+							{% else %}
+							<span class="badge bg-secondary text-dark">No seller</span>
+							{% endif %}
+							</br>
+							<a href="{{ purchase.get_absolute_url }}" class="btn btn-outline-light mt-2">View Card details</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h5 class="card-title">You have not purchased any card on the platform</h5>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="tab-pane fade" id="bundle-purchases" role="tabpanel">
+					<h1>Past Bundle Purchases</h1>
+					{% if my_bundle_purchases %} {% for purchase in my_bundle_purchases %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h4 class="card-title">
+								{{ purchase.bundle }}
+							</h4>
+							<span>Purchased on: {{ purchase.timestamp }}</span>
+							<br />
+							<span class="badge bg-success text-white"
+								>Price: {{ purchase.bundle.price|floatformat:"0"|intcomma }} DJOBA</span
+							>
+							<br />
+							<a href="{{ purchase.get_absolute_url }}" class="btn btn-outline-light mt-2">View Bundle details</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h5 class="card-title">You have not purchased any bundle on the platform</h5>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="tab-pane fade" id="card-sales" role="tabpanel">
+					<h1>Past Card Sales</h1>
+					{% if my_card_sales %} {% for purchase in my_card_sales %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ purchase.timestamp }}</span>
+							<h4 class="card-title">{{ purchase.card }}</h4>
+							<span class="badge bg-success text-white"
+								>Price: {{ purchase.card.price|floatformat:"0"|intcomma }} DJOBA
+							</span>
+							{% if purchase.seller %}
+							<span class="badge bg-lightext text-dark">Sold to {{purchase.buyer.username}}</span>
+							{% else %}
+							<span class="badge bg-secondary text-dark">No seller</span>
+							{% endif %}
+							</br>
+							<a href="{{ purchase.get_absolute_url }}" class="btn btn-outline-light mt-2">View Card details</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h5 class="card-title">You have not sold any card on the platform</h5>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+				<div class="tab-pane fade" id="rewards" role="tabpanel">
+					<h1>My Rewards</h1>
+				</div>
+				<div class="tab-pane fade" id="transactions" role="tabpanel">
+					<h1>Past Transactions</h1>
+					{% if my_currency_purchases %} {% for purchase in my_currency_purchases %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<span class="badge">{{ purchase.timestamp }}</span>
+							<h4 class="card-title">{{ purchase.currency_package }}</h4>
+							<span class="badge bg-success text-white"
+								>Received: {{ purchase.currency_amount|floatformat:"0"|intcomma }} DJOBA
+							</span>
+							</br>
+							<a href="{{ purchase.get_absolute_url }}" class="btn btn-outline-light mt-2">View Currency Package</a>
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="bg-dark text-white">
+						<div class="card-body">
+							<h5 class="card-title">You have not sold any card on the platform</h5>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
