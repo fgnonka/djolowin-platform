@@ -14,17 +14,7 @@
 		</div>
 		<div class="row" id="auctions">
 			{% for auction in auctions %}
-			<div class="col-md-4 col-lg-3 mb-4">
-				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} {% if auction.get_highest_bid.amount %}
-				<h4>Current Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA ({{ auction.highest_bidder.username }})</h4>
-				{% else %}
-				<h4>Starting Price: {{ auction.starting_price }} DJOBA</h4>
-				{% endif %}
-				<h4>Expires on: {{ auction.end_time }}</h4>
-				<a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
-					<h5 class="accentext">View this auction</h5>
-				</a>
-			</div>
+			{% include "djolowin/auction/component/auction.html" %}
 			{% empty %}
 			<div class="col-12">
 				<p>No Active auctions found at the moment. Please come back again later</p>
@@ -38,7 +28,7 @@
 				<h5 class="white-text">Owner: {{ auction.owner.username }}</h5>
 				{% include 'djolowin/playercard/model/playercard.html' with playercard=auction.card %} 
 				{% if auction.get_highest_bid.amount %}
-					<h4>This auction was sold to ({{ auction.highest_bidder.username }}) for {{ auction.get_highest_bid.amount|floatformat:"0"|intcomma }} DJOBA </h4>
+					<h5>This auction was sold to ({{ auction.highest_bidder.username }}) for {{ auction.get_highest_bid.amount|floatformat:"0"|intcomma }} DJOBA </h5>
 				{% else %}
 					<h5>Unfortunately, there was no bidder on this auction.</h5>
 				{% endif %}

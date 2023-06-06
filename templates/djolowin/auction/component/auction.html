@@ -1,3 +1,4 @@
+{% load humanize %}
 <div class="col-md-4 col-lg-3 mb-4">
     <a class="text-decoration-none" href="{% url 'auction:auction_detail' auction.id %}">
         <h6 class="accentext">View this auction</h6>
@@ -11,9 +12,9 @@
     <div class="white-text">
         <h5>Owner: {{ auction.owner.username }}</h5>
         {% if auction.get_highest_bid.amount %}
-        <h6>Highest Bid: {{ auction.get_highest_bid.amount }} DJOBA</h6>
+        <h6>Highest Bid: {{ auction.get_highest_bid.amount|floatformat:"0"|intcomma }} DJOBA</h6>
         {% else %}
-        <h6>Starting Price: {{ auction.starting_price }} DJOBA</h6>
+        <h6>Starting Price: {{ auction.starting_price|floatformat:"0"|intcomma }} DJOBA</h6>
         {% endif %}
         <div id="countdown">
             <h6>Expires on: {{ auction.end_time }}</h6>

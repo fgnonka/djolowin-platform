@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "communication",
     "core",
     "djolowin_graphql",
+    "djolowin_profile",
     "order",
     "playercard",
     "reward",

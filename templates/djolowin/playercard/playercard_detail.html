@@ -108,6 +108,14 @@
 							{% endif %} {% if request.user == playercard.owner %} {% if not playercard.is_locked %}
 							<button id="modify-price-btn" class="btn search-btn">Modify Card</button>
 						</div>
+						<div id="modify-price-form" style="display: none">
+							<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
+								{% csrf_token %} {{ form.as_p }}
+								<button class="btn" type="submit">
+									<span class="badge badge-default rounded-pill text-dark">Update Price</span>
+								</button>
+							</form>
+						</div>
 						<div class="p-2 flex-grow-0">
 							{% if not active_auctions %}
 							<div>
@@ -116,20 +124,11 @@
 								data-bs-toggle="modal"
 								data-bs-target="#auctionCreateModal-{{ playercard.id }}">
 								<span class="badge badge-default rounded-pill text-dark"
-									>Create and auction for this card</span
-								>
+									>Create and auction for this card</span>
 							</a>
 						</div>
 						{% include "djolowin/auction/modal_form/auction_create_modal.html" %}
 							{% endif %}
-							<div id="modify-price-form" style="display: none">
-								<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
-									{% csrf_token %} {{ form.as_p }}
-									<button class="btn" type="submit">
-										<span class="badge badge-default rounded-pill text-dark">Update Price</span>
-									</button>
-								</form>
-							</div>
 						</div>
 						{% endif %}{% endif %}
 					</div>

@@ -63,7 +63,7 @@ class BidFormMixin(SingleObjectMixin):
                 # Notify the owner of the auction
                 send_notification(
                     recipient=auction.owner,
-                    subject=f"New bid on auction #{auction.id}: {auction.card.name} - {auction.card.rarity}",
+                    subject=f"New bid on auction #{auction.id}: {auction.card.player.name} - {auction.card.rarity}",
                     message="{} has placed a bid of {} DJOBA on your auction for {}.".format(
                         bidder, bid_amount, auction
                     ),
@@ -72,7 +72,7 @@ class BidFormMixin(SingleObjectMixin):
                 if previous_bid and previous_bidder != bidder:
                     send_notification(
                         recipient=previous_bidder,
-                        subject=f"You have been outbid!! Auction #{auction.id}: {auction.card.name} - {auction.card.rarity} ",
+                        subject=f"You have been outbid!! Auction #{auction.id}: {auction.card.player.name} - {auction.card.rarity} ",
                         message="Your bid of {} DJOBA on {} has been outbid by {}.".format(
                             previous_bid.amount, auction, bidder
                         ),
@@ -86,7 +86,7 @@ class BidFormMixin(SingleObjectMixin):
                 for watcher in watchers:
                     send_notification(
                         recipient=watcher,
-                        subject=f"New bid on auction #{auction.id}: {auction.card.name} - {auction.card.rarity}",
+                        subject=f"New bid on auction #{auction.id}: {auction.card.player.name} - {auction.card.rarity}",
                         message="{} has placed a bid of {} on {}.".format(
                             bidder, bid_amount, auction
                         ),

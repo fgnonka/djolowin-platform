@@ -1,7 +1,12 @@
-{% extends "djolowin/main.html" %} {% load static %} {% block content %}
+{% extends "djolowin/main.html" %} {% load static %} {% load humanize %} {% block content %}
 <div class="container">
-	<h1>Player Card Search</h1>
-	<br />
+	<div class="row">
+		<div class="col-12">
+			<h1 class="white-text">Player Cards</h1>
+			<hr/ class="bg-white">
+		</div>
+		<br />
+	</div>
 	{% if user.is_authenticated %}
 	<div class="form-container mt-0 mb-4">
 		<form method="get" id="search-form">
@@ -19,7 +24,7 @@
 			{% include "djolowin/playercard/model/playercard.html" %}
             <div class="card-footer m-1">
 				<button type="button" class="btn search-btn" data-bs-toggle="modal" data-bs-target="#purchaseCardModal-{{ playercard.id }}">
-                Purchase for {{ playercard.price }} DJOBA
+                Price: {{ playercard.price|floatformat:"0"|intcomma }} DJOBA
 				</button>
 				<!-- Modal -->
 				{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}

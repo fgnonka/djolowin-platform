@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load humanize %}
 <div
 	class="modal fade"
 	id="purchaseCardModal-{{ playercard.id }}"
@@ -14,10 +14,10 @@
 			</div>
 			<div class="modal-body">
 				<h5>Are you sure you want to purchase this card?</h5>
-				<h6> Your current balance is {{request.user.wallet.balance}} DJOBA</h6>                
+				<h6> Your current balance is {{request.user.wallet.balance|floatformat:"0"|intcomma}} DJOBA</h6>                
 			</div>
 			<div class="modal-footer">
-                <a href="{% url 'playercard:purchase-playercard' playercard.id %}" class="btn btn-primary">Purchase for {{playercard.price}} DJOBA</a>
+                <a href="{% url 'playercard:purchase-playercard' playercard.id %}" class="btn btn-primary">Purchase for {{playercard.price|floatformat:"0"|intcomma}} DJOBA</a>
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel Purchase</button>
 			</div>
 		</div>

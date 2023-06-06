@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import EmailMessage
 from django.db import models
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -214,5 +215,11 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
             kwargs={"username": self.request.user.username},
         )
 
+def validate_username(request):
+    username = request.GET.get("username", None)
+    data = {
+        "is_taken": User.objects.filter(username__iexact=username).exists()
+    }
+    return JsonResponse(data)
 
 user_redirect_view = UserRedirectView.as_view()

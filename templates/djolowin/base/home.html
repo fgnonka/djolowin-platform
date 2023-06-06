@@ -1,4 +1,4 @@
-{% extends "djolowin/main.html" %} {% load static %} {% block content %}
+{% extends "djolowin/main.html" %} {% load static %} {% load humanize %} {% block content %}
 
 <main>
 	<div class="container-lg" >
@@ -16,9 +16,9 @@
 			{% for playercard in playercards %}
 			<div class="col-12 col-sm-6 col-md-4 col-lg-3">
 				{% include "djolowin/playercard/model/playercard.html" %}
-				<div class="card-footer m-0">
+				<div class="card-footer mb-4 justify-content-center">
 					<button type="button" class="btn search-btn" data-bs-toggle="modal" data-bs-target="#purchaseCardModal-{{ playercard.id }}">
-					Purchase for {{ playercard.price }} DJOBA
+					Price: {{ playercard.price|floatformat:"0"|intcomma }} DJOBA
 					</button>
 					<!-- Modal -->
 					{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}

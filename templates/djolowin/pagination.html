@@ -1,6 +1,6 @@
 {% if is_paginated %} {% if page_obj.has_other_pages %}
 <nav aria-label="Card collection pagination">
-	<ul class="pagination">
+	<ul class="pagination justify-content-center">
 		{% if page_obj.has_previous %}
 		<li class="page-item">
 			<a
@@ -21,7 +21,7 @@
 			<span class="page-link">First</span>
 		</li>
 		<li class="page-item disabled">
-			<span class="page-link">Previous</span>
+			<span class="page-link">Prev.</span>
 		</li>
 		{% endif %} {% for i in paginator.page_range %} {% if i >= page_obj.number|add:"-3" and i <= page_obj.number|add:"3" %} {% if page_obj.number == i %}
 		<li class="page-item active">

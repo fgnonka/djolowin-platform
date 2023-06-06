@@ -170,16 +170,24 @@ def purchase_playercard(request, pk):
     playercard = get_object_or_404(PlayerCard, pk=pk)
     user = request.user
     user_wallet = UserWallet.objects.get(user=user)
-
     if user_wallet.available_balance >= playercard.price:
         user_wallet.balance -= playercard.price
         user_wallet.save()
+        if playercard.owner:
+            seller = playercard.owner 
+            seller_wallet = UserWallet.objects.get(user=seller)
+            seller_wallet.balance += playercard.price
+            seller_wallet.save()
+            create_card_purchase_transaction(
+                buyer=request.user, seller=seller, card=playercard, amount_spent=playercard.price
+            )
+        else:
+            create_card_purchase_transaction(
+                    buyer=request.user, seller=None, card=playercard, amount_spent=playercard.price
+                )
         playercard.owner = request.user
         playercard.for_sale = False
         playercard.save()
-        create_card_purchase_transaction(
-            user=request.user, card=playercard, amount_spent=playercard.price
-        )
         messages.success(
             request,
             "Player card successfully purchased! Your balance is now {}DJOBA.".format(

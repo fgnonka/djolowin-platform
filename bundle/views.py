@@ -47,7 +47,7 @@ def purchase_bundle(request, pk):
         bundle.mark_as_sold(buyer=request.user)
         send_notification(recipient=request.user, subject=f"You have purchased a {bundle.rarity} Bundle!", message=f"Congratulations, You have purchased a {bundle.rarity} Bundle!")
         create_bundle_purchase_transaction(
-            user=request.user, bundle=bundle, amount_spent=bundle.price
+            buyer=request.user, bundle=bundle, amount_spent=bundle.price
         )
         messages.success(request, "Bundle purchased successfully!")
         return redirect("bundle:bundle-detail", pk=bundle.id)

@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.urls import path, include
 from graphene_django.views import GraphQLView
 
+
 urlpatterns = [
     path("", include("base.urls", namespace="base")),
     path("admin/", admin.site.urls),
@@ -14,10 +15,11 @@ urlpatterns = [
     path("communication/", include("communication.urls", namespace="communication")),
     path("currency/", include("app_currency.urls", namespace="currency")),
     path("graphql/", GraphQLView.as_view(graphiql=True)),
+    path("my-djolowin/", include("djolowin_profile.urls", namespace="djolowin_profile")),
     path("playercard/", include("playercard.urls", namespace="playercard")),
+    path("social-auth/", include("social_django.urls", namespace="social")),
     path("transaction/", include("transaction.urls", namespace="transaction")),
     path("wallet/", include("wallet.urls", namespace="wallet")),
-    path("social-auth/", include("social_django.urls", namespace="social")),
 ]
 
 if settings.DEBUG:

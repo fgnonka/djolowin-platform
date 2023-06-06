@@ -10,6 +10,7 @@ from .views import (
     RequestActivationEmailView,
     ActivateAccountView,
     EmailSentView,
+    validate_username,
 )
 
 app_name = "account"
@@ -28,6 +29,7 @@ urlpatterns = [
     path("redirect/", view=user_redirect_view, name="user-redirect"),
     path("update/", view=user_update_view, name="user-update"),
     path("user-detail/<uuid:uuid>/", view=user_detail_view, name="user-detail"),
+    path("validate_username/", view=validate_username, name="validate_username"),
     # Password change urls
     path(
         "password-change/",

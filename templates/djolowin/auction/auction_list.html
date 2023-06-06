@@ -3,8 +3,8 @@
 {% endblock %} {% block content %}
 <main>
 	<div clas="container">
-		<h1>Auctions</h1>
-		<h2>Search Auctions</h2>
+		<h1 class="text-white">Auctions</h1>
+		<hr class="bg-white" />
 		<div class="form-container mt-0 mb-4">
 			<form method="get" id="search-form">
 				{{ form.as_p }}
@@ -13,7 +13,7 @@
 		</div>
 		<hr />
 		<div class="row">
-			<h2>All Active Auctions</h2>
+			<h2 class="text-white mb-3">All Active Auctions</h2>
 			{% for auction in auctions %} {% include "djolowin/auction/component/auction.html" %} {% empty %}
 			<div class="col-12">
 				<p>No Active auctions found at the moment. Please come back again later</p>
@@ -22,7 +22,7 @@
 		</div>
 		<hr style="color: white" />
 		<div class="row">
-			<h2>Auctions you are watching</h2>
+			<h2 class="text-white mb-3">Auctions you are watching</h2>
 			{% for auction in watched_auctions %} {% include "djolowin/auction/component/auction.html" %} {% empty %}
 			<div class="col-12">
 				<p>You are not watching any auction. Place a bid on an auction or create one.</p>

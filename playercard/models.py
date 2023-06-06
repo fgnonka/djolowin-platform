@@ -85,7 +85,7 @@ class PlayerCard(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.player} --- {self.rarity} --- {self.index}"
+        return f"{self.rarity} - {self.player.name} - Index: {self.index}"
 
     def get_absolute_url(self):
         return reverse("playercard:playercard-detail", kwargs={"pk": self.pk})

@@ -7,7 +7,7 @@
 			src="{% static 'images/djolo-win-website-favicon-color.png' %}"
 			alt="Elephant Logo"
 			width="40"
-			height="40" />DjoloWin</a
+			height="40" />Djolo Win</a
 	>
 	<button
 		class="navbar-toggler"
@@ -56,9 +56,9 @@
 					<i class="fa fa-user"></i>{{request.user.username}}</a>
 				{% endif %}
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="{% url 'account:user-detail' uuid=request.user.uuid %}">My Profile Information</a>
+					<a class="dropdown-item" href="{% url 'djolowin_profile:profile' %}">My DjoloWin</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#">My Squad</a>
+					<a class="dropdown-item" href="{% url 'account:user-detail' uuid=request.user.uuid %}">My Profile Information</a>
 					<div class="dropdown-divider"></div>
 					<a class="dropdown-item" href="{% url 'playercard:owned-playercard' %}">My Cards</a>
 					<a class="dropdown-item" href="{% url 'collection:collection_list' %}">My Collections</a>

@@ -14,7 +14,6 @@ from .error_codes import AccountErrorCode
 
 
 
-
 def validate_confusables(value):
     """
     Validator which disallows 'dangerous' usernames likely to

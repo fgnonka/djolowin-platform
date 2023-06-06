@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
+from django.urls import reverse
 from django.utils import timezone
 from playercard.models import PlayerCard
 
@@ -28,6 +29,7 @@ class Auction(models.Model):
     watchers = models.ManyToManyField(CustomUser, related_name="watched_auctions")
     auction_ended = models.BooleanField(default=False)
     sold = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     
     class Meta:
         ordering = ["-start_time"]
@@ -85,6 +87,8 @@ class Auction(models.Model):
                 return True
         return False
     
+    def get_absolute_url(self):
+        return reverse("auction:auction_detail", kwargs={"pk": self.pk})
 
     def get_highest_bid(self):
         if self.current_bid:
@@ -94,14 +98,17 @@ class Auction(models.Model):
 class Bid(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     bidder = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=0)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.bidder} - Bid on {self.auction}"
+        return f"{self.bidder.username} - Bid on: {self.auction} for {self.amount:,} DJOBA"
 
     def save(self, *args, **kwargs):
         if self.auction.is_active():
             super().save(*args, **kwargs)
         else:
             raise Exception("Auction is not active.")
+    
+    def get_absolute_url(self):
+        return reverse("auction:auction_detail", kwargs={"pk": self.auction.pk})
