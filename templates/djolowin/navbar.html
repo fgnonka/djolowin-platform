@@ -7,28 +7,13 @@
 			src="{% static 'images/djolo-win-website-favicon-color.png' %}"
 			alt="Elephant Logo"
 			width="40"
-			height="40" />Djolo Win</a
-	>
-	<button
-		class="navbar-toggler"
-		type="button"
-		data-bs-toggle="collapse"
-		data-bs-target="#navbarSupportedContent"
-		aria-controls="navbarSupportedContent"
-		aria-expanded="false"
-		aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-
-	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-			<li class="nav-item	dropdown">
-				<a class="nav-link" href="#" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+			height="40" />Djolo Win</a>
+				<a class="nav-link m-0" href="#" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="gray" class="bi bi-bell-fill bell-icon" viewBox="0 0 16 16">
 						<path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
 					</svg>
 					{% if unread_notifications.count > 0 %}
-						<span class="position-absolute top-0 start-90 translate-middle badge rounded-pill bg-danger">{{ unread_notifications.count }}</span>
+						<span class="position-absolute translate-middle p-2 bg-lightext rounded-circle"></span>
 					{% endif %}
 				</a>
 				<div class="dropdown-menu " aria-labelledby="navbarDropdown">
@@ -47,9 +32,20 @@
 								<a class="dropdown-item" href="{% url 'communication:notifications-inbox' %}">No unread notifications</a>
 							{% endfor %}
 						</ul>
-						</div>
+					</div>
 				</div>
-			</li>
+	<button
+		class="navbar-toggler"
+		type="button"
+		data-bs-toggle="collapse"
+		data-bs-target="#navbarSupportedContent"
+		aria-controls="navbarSupportedContent"
+		aria-expanded="false"
+		aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 			<li class="nav-item dropdown">
 				{% if request.user.is_authenticated %}
 					<a class="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -68,7 +64,7 @@
 			</li>
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					Marketplace
+					Cards Market
 				</a>
 				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 					<a class="dropdown-item" href={% url 'auction:active_auctions' %}>Auctions</a>
@@ -76,6 +72,11 @@
 					<a class="dropdown-item" href="{% url 'bundle:bundles-list' %}">Bundles</a>
 					<a class="dropdown-item" href="#">Special Offers</a>
 				</div>
+			</li>
+			<li>
+			<a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				DjoloWin Shop
+			</a>
 			</li>
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,11 +89,6 @@
 					<a class="dropdown-item" href="#">Payment Methods</a>
 					<a class="dropdown-item" href="#">Language and Location</a>
 				</div>
-			</li>
-			<li>
-			<a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-				Rewards Center
-			</a>
 			</li>
 			<li>
 				<a href={% url 'account:logout' %} class="nav-link"><i class="fa fa-fw fa-power-off"></i>Log Out</a>

@@ -10,4 +10,4 @@ class TransactionListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Transaction.objects.filter(user=self.request.user).order_by('-timestamp')
+        return Transaction.objects.filter(buyer=self.request.user).order_by('-timestamp')

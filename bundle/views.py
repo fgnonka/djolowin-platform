@@ -1,5 +1,5 @@
 from django.contrib import messages
-from  django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render, redirect
 
@@ -14,20 +14,22 @@ from wallet.models import UserWallet
 from .models import Bundle
 from .forms import BundleFilterForm
 
+
 class BundleListView(CustomDispatchMixin, TemplateView):
     model = Bundle
     paginate_by = 10
     context_object_name = "bundles"
     template_name = "djolowin/bundle/card_bundle_list.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["rarities"] = CardRarity.objects.all()
-        context["common_price"]= Bundle.objects.filter(rarity__name="Common").first().get_price()
+        context["common_price"] = (
+            Bundle.objects.filter(rarity__name="Common").first().get_price()
+        )
         # context["limited_price"]= Bundle.objects.filter(rarity__name="Limited").first().get_price()
         # context["rare_price"]= Bundle.objects.filter(rarity__name="Rare").first().get_price()
         return context
-
 
 
 @login_required
@@ -45,16 +47,21 @@ def purchase_bundle(request, pk):
             card.save()
 
         bundle.mark_as_sold(buyer=request.user)
-        send_notification(recipient=request.user, subject=f"You have purchased a {bundle.rarity} Bundle!", message=f"Congratulations, You have purchased a {bundle.rarity} Bundle!")
+        send_notification(
+            recipient=request.user,
+            subject=f"You have purchased a {bundle.rarity} Bundle!",
+            message=f"Congratulations {request.user}, You have purchased a {bundle.rarity} Bundle for {bundle.price} DJOBA!",
+        )
         create_bundle_purchase_transaction(
             buyer=request.user, bundle=bundle, amount_spent=bundle.price
         )
-        messages.success(request, "Bundle purchased successfully!")
+        messages.success(request, f"{bundle.rarity} bundle purchased successfully!")
         return redirect("bundle:bundle-detail", pk=bundle.id)
     else:
         messages.error(request, "Insufficient balance to purchase this bundle.")
         # return render(request, "djolowin/bundle/bundle_purchase.html", {"bundle": bundle})
     return redirect("bundle:bundles-list")
+
 
 @login_required
 def purchase_bundle_on_rarity(request, rarity):
@@ -65,11 +72,14 @@ def purchase_bundle_on_rarity(request, rarity):
         messages.error(request, "No bundles available for this rarity.")
         return redirect("bundle:bundles-list")
 
+
 def random_bundle(rarity):
     bundles = Bundle.objects.filter(rarity__name=rarity, is_sold=False)
     if bundles:
         return bundles.order_by("?").first()
     return None
+
+
 class BundleDetailView(CustomDispatchMixin, DetailView):
     model = Bundle
     context_object_name = "bundle"

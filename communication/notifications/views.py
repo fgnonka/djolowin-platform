@@ -1,4 +1,7 @@
+from django.contrib import messages
 from django.conf import settings
+from django.db.models import Q
+from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -21,6 +24,17 @@ class NotificationListView(CustomDispatchMixin, PageTitleMixin, generic.ListView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["list_type"] = self.list_type
+        context["unread_count"] = Notification.objects.filter(Q(recipient=self.request.user) & Q(date_read=None)).count()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        if "mark_all_as_read" in request.POST:
+            Notification.objects.filter(
+                recipient=request.user, date_read=None
+            ).update(date_read=now())
+            messages.success(request, _("All notifications marked as read."))
+            return redirect("communication:notifications-inbox")
+        return super().post(request, *args, **kwargs)
 
 
 class InboxView(NotificationListView):

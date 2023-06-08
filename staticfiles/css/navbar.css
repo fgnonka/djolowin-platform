@@ -9,3 +9,20 @@
 	padding: 0.5rem 1rem;
 }
 
+.red-bg-dot {
+	background-color: #ff0000;
+	height: 0.1rem;
+	width: 0.1rem;
+}
+
+.rotated {
+	transform: rotate(45deg);
+}
+
+.bell-icon {
+	fill: #ffffff;
+}
+
+.bell-icon:hover {
+	fill: #81ffd9;
+}

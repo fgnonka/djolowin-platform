@@ -6,12 +6,11 @@
 		<h5 class="text-white">{{playercard.rarity.name}} {{ playercard.index }}/{{ playercard.get_total_card_index }}</h5>
 	</div>
 	<div class="flex-container" style="border-radius: 20px">
-		<div class="flex-child" style="display: flex; justify-content: center; align-items: center">
+		<div class="flex-child" style="display: flex; justify-content: left; align-items: center">
 			<div class="d-flex">
 				<div class="p-2">{% include "djolowin/playercard/model/playercard.html" %}</div>
 			</div>
 		</div>
-		<div class="flex-child">
 			<div class="d-flex">
 				<div class="p-2 flex-grow-1">
 					<div class="flex-child">
@@ -107,14 +106,14 @@
 							{% include "djolowin/playercard/modal_form/purchase_card_modal.html" %}
 							{% endif %} {% if request.user == playercard.owner %} {% if not playercard.is_locked %}
 							<button id="modify-price-btn" class="btn search-btn">Modify Card</button>
-						</div>
-						<div id="modify-price-form" style="display: none">
-							<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
-								{% csrf_token %} {{ form.as_p }}
-								<button class="btn" type="submit">
-									<span class="badge badge-default rounded-pill text-dark">Update Price</span>
-								</button>
-							</form>
+							<div id="modify-price-form" style="display: none">
+								<form method="post" action="{% url 'playercard:update_price' playercard.id %}">
+									{% csrf_token %} {{ form.as_p }}
+									<button class="btn" type="submit">
+										<span class="badge badge-default rounded-pill text-dark">Update Price</span>
+									</button>
+								</form>
+							</div>
 						</div>
 						<div class="p-2 flex-grow-0">
 							{% if not active_auctions %}
@@ -134,7 +133,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		<div class="group mt-5">
 			<h3 class="text-white">Last {{ playercard.rarity.name }} Auctions</h3>
 			<div class="flex-child">

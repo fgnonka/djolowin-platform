@@ -2,8 +2,8 @@
 	color: white;
 }
 @font-face {
-    font-family: "Montserrat SemiBold";
-    src: url("../fonts/Montserrat-SemiBold.ttf") format("truetype");
+	font-family: "Montserrat SemiBold";
+	src: url("../fonts/Montserrat-SemiBold.ttf") format("truetype");
 }
 
 @font-face {
@@ -21,9 +21,9 @@
 }
 
 body {
-    font-family: "Montserrat SemiBold", sans-serif;
-    margin: 0px;
-    background-color: aliceblue;
+	font-family: "Montserrat SemiBold", sans-serif;
+	margin: 0px;
+	background-color: aliceblue;
 }
 
 footer {
@@ -158,8 +158,36 @@ p {
 		flex-direction: column;
 	}
 
-	.flex-child {	
+	.flex-child {
 		flex: none;
 		width: 100%;
 	}
+}
+
+.pagination {
+	background-color: rgb(0, 0, 0);
+}
+
+.pagination .page-item a {
+	color: rgb(255, 255, 255);
+	background-color: rgb(0, 0, 0);
+	border-color: rgb(0, 0, 0);
+}
+
+.pagination .page-item a:hover {
+	color: #81ffd9;
+	background-color: rgb(0, 0, 0);
+	border-color: rgb(0, 0, 0);
+}
+
+.pagination .page-item.activ span {
+	background-color: rgb(0, 0, 0);
+	border-color: rgb(0, 0, 0);
+	color: #81ffd9;
+}
+
+.pagination .page-item.disable span {
+	background-color: rgb(0, 0, 0);
+	border-color: rgb(0, 0, 0);
+	color: rgb(87, 87, 87);
 }

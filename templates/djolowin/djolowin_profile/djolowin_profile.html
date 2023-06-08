@@ -2,8 +2,8 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-2 col-sm" style="border: solid 2px">
-			<div class="list-group" id="profileList" role="tablist">
+		<div class="col-2 rounded col-sm">
+			<div class="list-group " id="profileList" role="tablist">
 				<a
 					class="list-group-item list-group-item-action list-group-item-dark active"
 					data-bs-toggle="list"
@@ -67,7 +67,7 @@
 				<div class="tab-pane fade show active" id="latest" role="tabpanel">
 					<h1>Latest Activity</h1>
 					{% for activity in latest_activity %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded">
 						<div class="card-body">
 							<span class="badge">{{ activity.timestamp }}</span>
 							<h5 class="card-title">{{ activity }}</h5>
@@ -79,13 +79,13 @@
 				<div class="tab-pane fade" id="auctions" role="tabpanel">
 					<h1>My Active Auctions</h1>
 					{% if my_active_auctions %} {% for auction in my_active_auctions %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<span class="badge">{{ auction.timestamp }}</span>
 							<h4 class="card-title">
 								{{ auction.card }}
 							</h4>
-							<span class="badge bg-lightext text-dark">Auction ends on {{ auction.end_time }}</span>
+							<span class="badge bg-lightext text-dark text-wrap">Auction ends on {{ auction.end_time }}</span>
 							<br />
 							{% if auction.current_bid %}
 							<span class="badge bg-success text-dark">Current Bid: {{ auction.current_bid }} DJOBA</span>
@@ -107,7 +107,7 @@
 				<div class="tab-pane fade" id="bids" role="tabpanel">
 					<h1>My Bids</h1>
 					{% if my_bids %} {% for bid in my_bids %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<span class="badge">{{ bid.timestamp }}</span>
 							<h4 class="card-title">
@@ -120,14 +120,14 @@
 								{% if bid.auction.highest_bidder == request.user %}
 								<span class="badge bg-success text-white">You won the auction</span>
 								{% else %}
-								<span class="badge bg-danger text-white">You did not win the auction</span>
+								<span class="badge bg-danger text-dark">You did not win the auction</span>
 								{% endif %}
 							{% else %}
 								<span class="badge bg-success text-white">Auction is still active</span>
 								{% if bid.auction.get_highest_bid == bid %}
 								<span class="badge bg-success text-white">You are the highest bidder</span>
 								{% else %}
-								<span class="badge bg-danger text-white">You are no longer the highest bidder</span>
+								<span class="badge bg-danger text-dark">You are no longer the highest bidder</span>
 								{% endif %}
 							{% endif %}
 							<br />
@@ -145,7 +145,7 @@
 				<div class="tab-pane fade" id="card-purchases" role="tabpanel">
 					<h1>Past Card Purchases</h1>
 					{% if my_card_purchases %} {% for purchase in my_card_purchases %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<span class="badge">{{ purchase.timestamp }}</span>
 							<h4 class="card-title">{{ purchase.card }}</h4>
@@ -172,7 +172,7 @@
 				<div class="tab-pane fade" id="bundle-purchases" role="tabpanel">
 					<h1>Past Bundle Purchases</h1>
 					{% if my_bundle_purchases %} {% for purchase in my_bundle_purchases %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<h4 class="card-title">
 								{{ purchase.bundle }}
@@ -197,7 +197,7 @@
 				<div class="tab-pane fade" id="card-sales" role="tabpanel">
 					<h1>Past Card Sales</h1>
 					{% if my_card_sales %} {% for purchase in my_card_sales %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<span class="badge">{{ purchase.timestamp }}</span>
 							<h4 class="card-title">{{ purchase.card }}</h4>
@@ -227,7 +227,7 @@
 				<div class="tab-pane fade" id="transactions" role="tabpanel">
 					<h1>Past Transactions</h1>
 					{% if my_currency_purchases %} {% for purchase in my_currency_purchases %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<span class="badge">{{ purchase.timestamp }}</span>
 							<h4 class="card-title">{{ purchase.currency_package }}</h4>
@@ -239,7 +239,7 @@
 						</div>
 					</div>
 					{% endfor %} {% else %}
-					<div class="bg-dark text-white">
+					<div class="bg-dark text-white mb-1 rounded" style="border-radius: 40px;">
 						<div class="card-body">
 							<h5 class="card-title">You have not sold any card on the platform</h5>
 						</div>
