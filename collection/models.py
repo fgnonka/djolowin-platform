@@ -23,7 +23,7 @@ class Collection(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse('collection:detail', kwargs={'pk': self.pk})
+        return reverse('collection:collection_detail', kwargs={'pk': self.pk})
     
     def get_cards(self):
         return self.cards.all()

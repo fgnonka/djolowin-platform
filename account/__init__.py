@@ -17,13 +17,12 @@ class CustomerEvents:
     # Trade related events
     PLACED_SINGLE_ORDER = "placed_single_order"  # created a single item order
     PLACED_BUNDLE_ORDER = "placed_bundle_order"  # created a bundles items order
-    PLACED_TOPUP_ORDER = "placed_topup_order"  # created a topup order
     CREATED_AUCTION = "created_auction"  # created an auction
     DELETED_AUCTION = "deleted_auction"  # deleted an auction
     CURRENCY_WITHDRAWN = (
         "currency_withdrawn"  # currency withdrawn from availabe balance
     )
-    CURRENCY_DEPOSITED = "currency_deposited"  # currency deposited on account
+    CURRENCY_PURCHASED = "currency_purchased"  # currency deposited on account
 
     # Promotion related events
     WATCHED_ADS_IN_PLATFORM = "watched_ads_in_platform"  # watched ads
@@ -64,10 +63,9 @@ class CustomerEvents:
         (NOTE_ADDED, "A note was added to the customer"),
         # Account activity
         (CURRENCY_WITHDRAWN, "The customer withdrew some currency"),
-        (CURRENCY_DEPOSITED, "The customer deposited some currency"),
+        (CURRENCY_PURCHASED, "The customer purchased some currency"),
         (PLACED_SINGLE_ORDER, "A single order was placed"),
         (PLACED_BUNDLE_ORDER, "A bundled order was placed"),
-        (PLACED_TOPUP_ORDER, "A topup order was placed"),
         (CREATED_AUCTION, "An auction was created"),
         (DELETED_AUCTION, "An auction was deleted"),
         # Promotions
