@@ -1,32 +1,28 @@
 import graphene
-from graphene_django import DjangoObjectType
+from graphql_auth.schema import UserQuery, MeQuery
 
-from account.models import CustomUser
+from .mutations import AuthMutation
+from .types import CustomUserType, AddressType
+from .resolvers import Resolvers
 
-from .mutations.account import CreateCustomUser, UpdateCustomUser, DeleteCustomUser
-from .types import CustomUserType
 
-
-class AccountQueries(graphene.ObjectType):
+class AccountQueries(UserQuery, MeQuery, graphene.ObjectType, Resolvers):
     """Queries for Account"""
 
-    account = graphene.Field(CustomUserType, id=graphene.Int(required=True))
-    all_accounts = graphene.List(CustomUserType)
-
-    def resolve_account(self, info, id):
-        """Get account by id"""
-        return CustomUser.objects.get(id=id)
-
-    def resolve_all_accounts(self, info, **kwargs):
-        """Get all accounts"""
-        return CustomUser.objects.all()
+    user = graphene.Field(CustomUserType, id=graphene.Int(required=True))
+    users_by_joined_date = graphene.List(
+        CustomUserType, date_joined=graphene.Date(required=True)
+    )
+    address = graphene.Field(AddressType, id=graphene.Int(required=True))
+    all_users = graphene.List(CustomUserType)
+    all_staff = graphene.List(CustomUserType)
+    all_addresses = graphene.List(AddressType)
 
 
-class AccountMutations(graphene.ObjectType):
+class AccountMutations(AuthMutation, graphene.ObjectType):
     """Mutations for Account"""
-    create_account = CreateCustomUser.Field()
-    update_account = UpdateCustomUser.Field()
-    delete_account = DeleteCustomUser.Field()
+
+    pass
 
 
 schema = graphene.Schema(query=AccountQueries, mutation=AccountMutations)

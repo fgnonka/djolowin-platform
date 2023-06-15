@@ -18,12 +18,10 @@ class CustomerEvents:
     PLACED_SINGLE_ORDER = "placed_single_order"  # created a single item order
     PLACED_BUNDLE_ORDER = "placed_bundle_order"  # created a bundles items order
     PLACED_TOPUP_ORDER = "placed_topup_order"  # created a topup order
-    CREATED_AUCTION = "created_auction"  # created an auction
-    DELETED_AUCTION = "deleted_auction"  # deleted an auction
-    CURRENCY_WITHDRAWN = (
-        "currency_withdrawn"  # currency withdrawn from availabe balance
+    CURRENCY_WITHDRAWAL = (
+        "currency_withdrawal"  # currency withdrawn from availabe balance
     )
-    CURRENCY_DEPOSITED = "currency_deposited"  # currency deposited on account
+    CURRENCY_DEPOSIT = "currency_deposit"  # currency deposited on account
 
     # Promotion related events
     WATCHED_ADS_IN_PLATFORM = "watched_ads_in_platform"  # watched ads
@@ -31,12 +29,9 @@ class CustomerEvents:
 
     # Staff actions over customers events
     CUSTOMER_DELETED = "customer_deleted"  # staff user deleted a customer
-    PHONE_ASSIGNED = (
-        "phone_assigned"  # the staff user assigned a phone number to the customer
-    )
     EMAIL_ASSIGNED = "email_assigned"  # the staff user assigned a email to the customer
     NAME_ASSIGNED = "name_assigned"  # the staff user added set a name to the customer
-    NOTE_ADDED = "note_added"  # the staff user added a note to the customer
+    NOTE_ADDED_TO_ORDER = "note_added_to_order"  # the staff user added a note to the customer
 
     CHOICES = [
         # Account Maintenance
@@ -60,16 +55,13 @@ class CustomerEvents:
         (CUSTOMER_DELETED, "A customer was deleted"),
         (NAME_ASSIGNED, "A customer's name was edited"),
         (EMAIL_ASSIGNED, "A customer's email address was edited"),
-        (PHONE_ASSIGNED, "A customer's phone number was edited"),
-        (NOTE_ADDED, "A note was added to the customer"),
+        (NOTE_ADDED_TO_ORDER, "A note was added to the customer order"),
         # Account activity
-        (CURRENCY_WITHDRAWN, "The customer withdrew some currency"),
-        (CURRENCY_DEPOSITED, "The customer deposited some currency"),
+        (CURRENCY_WITHDRAWAL, "The customer withdrew some currency"),
+        (CURRENCY_DEPOSIT, "The customer deposited some currency"),
         (PLACED_SINGLE_ORDER, "A single order was placed"),
         (PLACED_BUNDLE_ORDER, "A bundled order was placed"),
         (PLACED_TOPUP_ORDER, "A topup order was placed"),
-        (CREATED_AUCTION, "An auction was created"),
-        (DELETED_AUCTION, "An auction was deleted"),
         # Promotions
         (WATCHED_ADS_IN_PLATFORM, "The customer watched ads in the platform"),
         (USED_PROMO_CODE, "The customer used a promo code"),

@@ -15,6 +15,13 @@
 	width: 0.1rem;
 }
 
+.dropdown-menu {
+	background-color: rgb(30, 29, 29);
+}
+.dropdown-item {
+	color: #ede2e2;
+}
+
 .rotated {
 	transform: rotate(45deg);
 }

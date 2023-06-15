@@ -52,6 +52,46 @@ def signup_form_clean_email(self):
     return email
 
 
+def validate_username_at_creation(username):
+    """This method is used to validate the username field against the DEFAULT_RESERVED_NAMES"""
+    check_username_length(username)
+    check_username_in_reserved_names(username)
+    check_username_exists(username)
+    validate_confusables(username)
+    return username
+
+
+def validate_email_at_creation(self):
+    """This method is used to validate the email field of a signup form."""
+    email = self.cleaned_data.get("email")
+    if User.objects.filter(email__iexact=email).exists():
+        raise forms.ValidationError(_("A user with that email already exists."))
+    validate_confusables_email(email)
+    return email
+
+def validate_username_at_update(self):
+    """This method is used to validate the username field of a form."""
+    username = self.cleaned_data.get("username")
+    check_username_length(username)
+    check_username_in_reserved_names(username)
+    queryset = User.objects.filter(username__iexact=username).exclude(
+        pk=self.instance.pk
+    )
+    if queryset.exists():
+        raise forms.ValidationError(_("Username already exists"))
+    validate_confusables(username)
+    return username
+
+def validate_email_at_update(self):
+    """This method is used to validate the email field of a form."""
+    email = self.cleaned_data.get("email")
+    queryset = User.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+    if queryset.exists():
+        raise forms.ValidationError(_("Email already exists"))
+    validate_confusables_email(email)
+    return email
+
+
 def update_form_clean_username(self):
     """This method is used to validate the username field of a form."""
     username = self.cleaned_data.get("username")

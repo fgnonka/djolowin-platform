@@ -91,6 +91,10 @@ class PlayerCard(models.Model):
         return reverse("playercard:playercard-detail", kwargs={"pk": self.pk})
 
     @property
+    def get_player_name(self):
+        return self.player.name
+    
+    @property
     def teams(self):
         return [(t.id, t.name) for t in Team.objects.all()]
 

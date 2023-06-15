@@ -10,6 +10,8 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.celery import CeleryIntegration
 from pathlib import Path
 
+from core.languages import LANGUAGES as CORE_LANGUAGES
+
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +25,16 @@ AUTH_USER_MODEL = "account.CustomUser"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.environ.get("SECRET_KEY"))
+RSA_PRIVATE_KEY = os.environ.get("RSA_PRIVATE_KEY", None)
+RSA_PRIVATE_PASSWORD = os.environ.get("RSA_PRIVATE_PASSWORD", None)
+JWT_MANAGER_PATH = os.environ.get(
+    "JWT_MANAGER_PATH", "djolowin.core.jwt_manager.JWTManager"
+)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]", "192.168.1.190", "0.0.0.0", "mysite.com"]
+ALLOWED_HOSTS = [
+    "*",
+]
 
 
 SITE_ID = 1
@@ -47,8 +56,11 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "graphene_django",
+    "graphql_auth",
+    "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "phonenumber_field",
     "rest_framework",
+    "rest_framework.authtoken",
     "social_django",
     # local apps
     "account",
@@ -57,12 +69,14 @@ INSTALLED_APPS = [
     "auction",
     "base",
     "bundle",
+    "channel",
     "collection",
     "communication",
     "core",
     "djolowin_graphql",
     "djolowin_profile",
     "order",
+    "permission",
     "playercard",
     "reward",
     "transaction",
@@ -73,6 +87,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -144,12 +159,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # JWT settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
 
 
 AUTHENTICATION_BACKENDS = [
+    "graphql_auth.backends.GraphQLAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
     "social_core.backends.google.GoogleOAuth2",
 ]
@@ -157,7 +173,8 @@ AUTHENTICATION_BACKENDS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+LANGUAGES = CORE_LANGUAGES
 
 TIME_ZONE = "UTC"
 
@@ -203,7 +220,8 @@ LOGOUT_URL = "account:logout"
 APPEND_SLASH = True
 DJOLOWIN_ACCOUNTS_REDIRECT_URL = "account:user-detail"
 
-# Defaults variables
+# Defaults variables\
+DATABASE_CONNECTION_DEFAULT_NAME = os.environ.get("DB_NAME")
 DEFAULT_FROM_EMAIL = "monsieurdjolo@djolo.win"
 DEFAULT_CURRENCY = "cad"
 DEFAULT_CURRENCY_CODE_LENGTH = 3
@@ -242,11 +260,14 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 stripe.api_key = STRIPE_SECRET_KEY
 
 # CORS settings
-CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:8080",  # Replace with your Vue.js app's address
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
 ]
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = ("http://localhost:8080",)
+
+JWT_EXPIRE = 60 * 60 * 24 * 7  # 7 days
 
 
 # Celery settings for background tasks
@@ -260,8 +281,32 @@ CELERY_TIMEZONE = "UTC"
 
 # GraphQL settings
 GRAPHENE = {
-    "SCHEMA": "djolowin_graphql.account.schema.schema",
+    "SCHEMA": "djolowin_graphql.api.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+    ],
+    "ATOMIC_MUTATIONS": True,
 }
+
+GRAPHQL_JWT = {
+    # ...
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.mutations.Register",
+        "graphql_auth.mutations.VerifyAccount",
+        "graphql_auth.mutations.ResendActivationEmail",
+        "graphql_auth.mutations.SendPasswordResetEmail",
+        "graphql_auth.mutations.PasswordReset",
+        "graphql_auth.mutations.ObtainJSONWebToken",
+        "graphql_auth.mutations.VerifyToken",
+        "graphql_auth.mutations.RefreshToken",
+        "graphql_auth.mutations.RevokeToken",
+        "graphql_auth.mutations.VerifySecondaryEmail",
+    ],
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+}
+
+ENABLE_SSL = False
 
 # SOcial auth settings
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
@@ -277,5 +322,5 @@ SOCIAL_AUTH_PIPELINE = [
     "social_core.pipeline.social_auth.associate_user",
     "social_core.pipeline.social_auth.load_extra_data",
     "social_core.pipeline.user.user_details",
-    "account.social_auth.create_user"
+    "account.social_auth.create_user",
 ]

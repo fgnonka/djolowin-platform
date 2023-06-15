@@ -5,4 +5,5 @@ LANGUAGES = [
     ('fr', 'French'),
     ('de', 'German'),
     ('it', 'Italian'),
+    ('pt', 'Portuguese'),
 ]

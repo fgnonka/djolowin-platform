@@ -1,3 +1,4 @@
+from functools import partial
 from uuid import uuid4
 
 from django.core.mail import send_mail
@@ -6,20 +7,27 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    PermissionsMixin,
 )
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.forms.models import model_to_dict
-
-from phonenumber_field.modelfields import PhoneNumber, PhoneNumberField
+from django.utils.crypto import get_random_string
+from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField, Country
 from PIL import Image
 
+from core.models import ModelWithMetadata
+from permission.models import PermissionsMixin, Permission
 from wallet.models import UserWallet
 from .manager import CustomUserManager
+from .validators import validate_possible_number
 from . import CustomerEvents
 
+
+class PossiblePhoneNumberField(PhoneNumberField):
+    """Less strict field for phone numbers written to database."""
+
+    default_validators = [validate_possible_number]
 
 class Address(models.Model):
     """ A model to represent a user's address."""
@@ -65,7 +73,7 @@ class Address(models.Model):
         return Address.objects.create(**self.as_data())
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(PermissionsMixin, AbstractBaseUser, ModelWithMetadata):
     """ Each `User` needs a human-readable unique identifier that we can use to
     represent the `User` in the UI. We want to index this column in the
     database to improve lookup performance"""
@@ -84,7 +92,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # the user anyways, we will also use the email for logging in because it is
     # the most common form of login credential at the time of writing.
     email = models.EmailField(_("Email address"), unique=True)
-
+    addresses = models.ManyToManyField(Address, blank=True, related_name="user_addresses")
     country = CountryField(_("Country"), blank=True)
     default_billing_address = models.ForeignKey(
         Address, related_name="+", null=True, blank=True, on_delete=models.SET_NULL
@@ -93,9 +101,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_img = models.ImageField(
         default="default.png", upload_to="profile_images", blank=True, null=True
     )
-    phone_number = PhoneNumberField(blank=True, default="", db_index=True)
-    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
-
+    phone_number = PossiblePhoneNumberField(blank=True, default="", db_index=True)
     login_points = models.PositiveIntegerField(default=0)
     # User Status
     # A timestamp representing when this object was created.
@@ -120,15 +126,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # letting them delete it. That way they won't show up on the site anymore,
     # but we can still analyze the data.
     is_active = models.BooleanField(_("Active"), default=True)
-    is_verified = models.BooleanField(_("Verified"), default=False)
+    jwt_token_key = models.CharField(
+        max_length=12, default=partial(get_random_string, length=12)
+    )
+    language_code = models.CharField(max_length=35, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE)
     note = models.TextField(null=True, blank=True)
     search_document = models.TextField(blank=True, default="")
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
     
     
 
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
     USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
 
     # Tells Django that the UserManager class defined above should manage
     # objects of this type.
@@ -136,7 +147,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
     class Meta:
-        ordering = ("pk",)
+        ordering = ("email",)
         indexes = [
             models.Index(fields=["username"]),
             models.Index(fields=["email"]),
@@ -198,12 +209,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             document += f" {self.country.name}"
         return document
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """ Sends an email to this user."""
-        send_mail(
-            subject, message, from_email, [self.email], fail_silently=False, **kwargs
-        )
-
     def get_absolute_url(self):
         """ Return the URL to the user detail page."""
         return reverse("account:user-detail", kwargs={"uuid": self.uuid})
@@ -233,3 +238,52 @@ class CheckInHistory(models.Model):
     user = models.ForeignKey(CustomUser, related_name="check_in_history", on_delete=models.CASCADE)
     check_in_time = models.DateTimeField(auto_now_add=True)
     check_in_window = models.CharField(max_length=255, blank=True, null=True)
+    
+class GroupManager(models.Manager):
+    """The manager for the auth's Group model."""
+
+    use_in_migrations = True
+
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Group(models.Model):
+    """The system provides a way to group users.
+
+    Groups are a generic way of categorizing users to apply permissions, or
+    some other label, to those users. A user can belong to any number of
+    groups.
+
+    A user in a group automatically has all the permissions granted to that
+    group. For example, if the group 'Site editors' has the permission
+    can_edit_home_page, any user in that group will have that permission.
+
+    Beyond permissions, groups are a convenient way to categorize users to
+    apply some label, or extended functionality, to them. For example, you
+    could create a group 'Special users', and you could write code that would
+    do special things to those users -- such as giving them access to a
+    members-only portion of your site, or sending them members-only email
+    messages.
+    """
+
+    name = models.CharField("name", max_length=150, unique=True)
+    permissions = models.ManyToManyField(
+        Permission,
+        verbose_name="permissions",
+        blank=True,
+    )
+    restricted_access_to_channels = models.BooleanField(default=False)
+    channels = models.ManyToManyField("channel.Channel", blank=True)
+
+    objects = GroupManager()
+
+    class Meta:
+        verbose_name = "group"
+        verbose_name_plural = "groups"
+
+    def __str__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)

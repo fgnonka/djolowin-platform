@@ -1,16 +1,14 @@
 from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.models import Site
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMultiAlternatives, EmailMessage
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-from communication.models import Notification, AbstractEmail
+from communication.models import Notification
 from communication.utils import create_abstract_email, create_user_abstract_email
 
-from .tokens import account_activation_token, decode_token_check, encode_token
+from .tokens import account_activation_token, encode_token
 
 
 def send_activation_email(user):

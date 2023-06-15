@@ -1,12 +1,17 @@
-from django.urls import path, include
+from django.urls import path
 
-
+from .api_views import PlayerCardsList, CardRarityList, Login
 from . import views
 from .dynamic import search_player_cards
+
+
 
 app_name = "playercard"
 
 urlpatterns = [
+    path("api/playercards/", PlayerCardsList.as_view(), name="playercards"),
+    path("api/cardrarity/", CardRarityList.as_view(), name="cardrarities"),
+    path("api/login/", Login.as_view(), name="login"),
     path(
         "owned/",
         views.UserPlayerCardListView.as_view(),

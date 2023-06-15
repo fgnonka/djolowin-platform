@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -7,7 +6,6 @@ from django.conf import settings
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
@@ -27,6 +25,7 @@ from wallet.models import UserWallet
 from .forms import CardForm, PlayerCardSearchForm
 from .mixins import PlayerCardSearchMixin
 from .signals import completed_card_purchase
+
 
 
 
